@@ -161,24 +161,3 @@ npm run dev
 ```
 *Frontend runs on: `http://localhost:5173`*
 
-### 4. Optional MongoDB Atlas Configuration
-In `backend/.env`, set your connection string:
-```env
-MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/linkpulse?retryWrites=true&w=majority
-```
-*(If omitted, LinkPulse automatically operates on its persistent store with zero setup required.)*
-
----
-
-## 🛡️ Security Features
-
-1. **Protocol Validation**: Only valid `http://` and `https://` destinations are allowed.
-2. **Loopback Protection**: Blocks private network destinations (`127.0.0.1`, `localhost`, `192.168.*`, `10.*`).
-3. **Malicious Domain Blacklist**: Blocks known phishing networks, malware distributors, and custom administrator-blocked domains.
-4. **Phishing Keyword Heuristics**: Detects suspicious strings in destination URLs.
-5. **Rate Limiting**: Protects against brute-force password attempts and spam URL creation.
-6. **Password Hashing**: Protects user credentials and protected links using salted bcrypt hashes.
-7. **JWT Authentication**: Role-based access tokens with strict expiration.
-=======
-# Team-Gradient-LinkPulse
->>>>>>> d4a4cfde2041f47bda859043ea349e9ad98a94f9

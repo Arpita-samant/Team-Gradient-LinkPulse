@@ -20,7 +20,8 @@ import {
   MessageCircle,
   ChevronDown,
   LogOut,
-  ShieldAlert
+  ShieldAlert,
+  Share2
 } from 'lucide-react';
 
 export default function LandingPage() {
@@ -28,6 +29,7 @@ export default function LandingPage() {
   const { theme, toggleTheme } = useTheme();
   const [copied, setCopied] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [shareFeedback, setShareFeedback] = useState(null);
   const navigate = useNavigate();
 
   const handleCopy = () => {
@@ -40,6 +42,32 @@ export default function LandingPage() {
     logout();
     setDropdownOpen(false);
     navigate('/');
+  };
+
+  const handleSocialShare = (platform) => {
+    const shareUrl = window.location.origin;
+    const shareText = 'Check out LinkPulse — A fast URL Shortener, QR Code Generator, and Real-Time Analytics platform!';
+
+    if (platform === 'whatsapp') {
+      const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+      setShareFeedback('Opening WhatsApp to share LinkPulse...');
+    } else if (platform === 'twitter') {
+      const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+      setShareFeedback('Opening X (Twitter) to share LinkPulse...');
+    } else if (platform === 'linkedin') {
+      const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+      setShareFeedback('Opening LinkedIn to share LinkPulse...');
+    } else if (platform === 'instagram') {
+      navigator.clipboard.writeText(shareUrl);
+      setShareFeedback('Platform link copied to clipboard! Paste into your Instagram Bio or Story.');
+    }
+
+    setTimeout(() => {
+      setShareFeedback(null);
+    }, 3500);
   };
 
   const displayName = user?.name ? user.name.split(' ')[0] : '';
@@ -63,7 +91,7 @@ export default function LandingPage() {
           <button
             onClick={toggleTheme}
             aria-label="Toggle theme"
-            className="p-2 rounded-xl text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors"
+            className="p-2 rounded-xl text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
           >
             {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-slate-600" />}
           </button>
@@ -73,7 +101,7 @@ export default function LandingPage() {
             <div className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center space-x-2 pl-2 pr-1.5 py-1 rounded-full hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors"
+                className="flex items-center space-x-2 pl-2 pr-1.5 py-1 rounded-full hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
               >
                 <div className="w-8 h-8 rounded-full bg-[#1e293b] dark:bg-indigo-600 text-white font-bold text-xs flex items-center justify-center ring-2 ring-[#4f46e5]/20 shadow-xs">
                   {initial}
@@ -174,20 +202,54 @@ export default function LandingPage() {
             track clicks, manage campaigns, and get valuable insights — all in one place.
           </p>
 
-          {/* Social Icons row */}
-          <div className="flex items-center justify-center lg:justify-start gap-3 sm:gap-4 text-slate-700 dark:text-slate-300 pt-1">
-            <span className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:text-indigo-600 cursor-pointer shadow-xs">
-              <MessageCircle className="w-5 h-5 text-emerald-500" />
-            </span>
-            <span className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:text-indigo-600 cursor-pointer shadow-xs">
-              <Instagram className="w-5 h-5 text-rose-500" />
-            </span>
-            <span className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:text-indigo-600 cursor-pointer shadow-xs">
-              <Linkedin className="w-5 h-5 text-blue-600" />
-            </span>
-            <span className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:text-indigo-600 cursor-pointer shadow-xs">
-              <Twitter className="w-5 h-5 text-sky-500" />
-            </span>
+          {/* Social Share Options */}
+          <div className="space-y-2 pt-1">
+            <div className="flex items-center justify-center lg:justify-start gap-2 text-xs text-slate-400 font-medium">
+              <Share2 className="w-3.5 h-3.5" />
+              <span>Share LinkPulse on:</span>
+            </div>
+            <div className="flex items-center justify-center lg:justify-start gap-3 sm:gap-4 text-slate-700 dark:text-slate-300">
+              <button
+                onClick={() => handleSocialShare('whatsapp')}
+                title="Share on WhatsApp"
+                aria-label="Share on WhatsApp"
+                className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 hover:scale-105 active:scale-95 transition-all cursor-pointer shadow-xs"
+              >
+                <MessageCircle className="w-5 h-5 text-emerald-500" />
+              </button>
+              <button
+                onClick={() => handleSocialShare('instagram')}
+                title="Share on Instagram"
+                aria-label="Share on Instagram"
+                className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-rose-400 hover:scale-105 active:scale-95 transition-all cursor-pointer shadow-xs"
+              >
+                <Instagram className="w-5 h-5 text-rose-500" />
+              </button>
+              <button
+                onClick={() => handleSocialShare('linkedin')}
+                title="Share on LinkedIn"
+                aria-label="Share on LinkedIn"
+                className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-blue-400 hover:scale-105 active:scale-95 transition-all cursor-pointer shadow-xs"
+              >
+                <Linkedin className="w-5 h-5 text-blue-600" />
+              </button>
+              <button
+                onClick={() => handleSocialShare('twitter')}
+                title="Share on X (Twitter)"
+                aria-label="Share on X (Twitter)"
+                className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-sky-400 hover:scale-105 active:scale-95 transition-all cursor-pointer shadow-xs"
+              >
+                <Twitter className="w-5 h-5 text-sky-500" />
+              </button>
+            </div>
+
+            {/* Inline feedback notification for social sharing */}
+            {shareFeedback && (
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs font-medium animate-in fade-in duration-200">
+                <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                <span>{shareFeedback}</span>
+              </div>
+            )}
           </div>
 
           <div className="pt-2">
@@ -217,7 +279,7 @@ export default function LandingPage() {
                 </span>
                 <button
                   onClick={handleCopy}
-                  className="p-1.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-300 shadow-xs transition-colors flex items-center gap-1 text-xs font-semibold shrink-0"
+                  className="p-1.5 rounded-lg bg-white dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-300 shadow-xs transition-colors flex items-center gap-1 text-xs font-semibold shrink-0 cursor-pointer"
                 >
                   {copied ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                   <span>{copied ? 'Copied' : 'Copy'}</span>

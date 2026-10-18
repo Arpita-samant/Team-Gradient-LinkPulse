@@ -7,6 +7,10 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['"Space Grotesk"', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['"Space Mono"', 'monospace'],
+      },
       colors: {
         primary: {
           50: '#eef2ff',

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Link2, ArrowRight, ShieldCheck, UserCheck, AlertCircle } from 'lucide-react';
+import { Link2, ArrowRight, ShieldCheck, UserCheck, AlertCircle, X } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -39,10 +39,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100">
-      <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-slate-200 dark:border-slate-700/80 space-y-6">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 relative">
+      <div className="relative max-w-md w-full bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-slate-200 dark:border-slate-700/80 space-y-6">
+        {/* Cross / Close button to return to home */}
+        <button
+          onClick={() => navigate('/')}
+          aria-label="Close"
+          title="Return to Home"
+          className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors cursor-pointer"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
         {/* Brand */}
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-2 pt-1">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white mx-auto shadow-md shadow-indigo-500/20">
             <Link2 className="w-6 h-6 -rotate-45" />
           </div>
@@ -93,7 +103,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl font-semibold text-white bg-[#5850ec] hover:bg-indigo-600 active:scale-[0.99] transition-all shadow-md shadow-indigo-500/25 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="w-full py-3 rounded-xl font-semibold text-white bg-[#5850ec] hover:bg-indigo-600 active:scale-[0.98] transition-all shadow-md shadow-indigo-500/25 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             <span>{loading ? 'Signing in...' : 'Sign In'}</span>
             <ArrowRight className="w-4 h-4" />
@@ -106,14 +116,14 @@ export default function LoginPage() {
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => handleQuickDemo('arpita@example.com', 'password123')}
-              className="px-3 py-2 rounded-xl text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center gap-1.5 transition-colors"
+              className="px-3 py-2 rounded-xl text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
             >
               <UserCheck className="w-3.5 h-3.5" />
               <span>Arpita (User)</span>
             </button>
             <button
               onClick={() => handleQuickDemo('admin@linkpulse.com', 'admin123')}
-              className="px-3 py-2 rounded-xl text-xs font-semibold bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/60 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 flex items-center justify-center gap-1.5 transition-colors"
+              className="px-3 py-2 rounded-xl text-xs font-semibold bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/60 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
             >
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Admin</span>
