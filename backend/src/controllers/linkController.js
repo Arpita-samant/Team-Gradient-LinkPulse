@@ -225,9 +225,26 @@ export async function getUserLinks(req, res) {
     const paginated = links.slice(startIndex, startIndex + limitNum);
 
     const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
-    const formatted = paginated.map(({ password, ...l }) => ({
-      ...l,
-      shortUrl: `${baseUrl}/${l.shortCode}`
+    const formatted = await Promise.all(paginated.map(async ({ password, ...l }) => {
+      const shortUrl = `${baseUrl}/${l.shortCode}`;
+      let qrCodeDataUrl = l.qrCodeDataUrl;
+      if (!qrCodeDataUrl) {
+        try {
+          qrCodeDataUrl = await QRCode.toDataURL(shortUrl, {
+            width: 300,
+            margin: 2,
+            color: { dark: '#000000', light: '#ffffff' }
+          });
+          LinkService.updateById(l._id, { qrCodeDataUrl });
+        } catch (e) {
+          console.warn('QR code fallback generation warning:', e.message);
+        }
+      }
+      return {
+        ...l,
+        shortUrl,
+        qrCodeDataUrl: qrCodeDataUrl || ''
+      };
     }));
 
     // Extract all unique tags for filter dropdown

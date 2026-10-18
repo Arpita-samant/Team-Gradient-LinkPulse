@@ -5,7 +5,7 @@ import { detectClientInfo } from '../utils/deviceDetector.js';
 export async function handleRedirect(req, res) {
   try {
     const { shortCode } = req.params;
-    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+    const clientUrl = process.env.CLIENT_URL || `${req.protocol}://${req.get('host')}`;
 
     const link = await LinkService.findByShortCode(shortCode);
 

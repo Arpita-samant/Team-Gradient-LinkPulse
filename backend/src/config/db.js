@@ -559,15 +559,19 @@ let isMongoConnected = false;
 
 export async function connectDB() {
   const mongoURI = process.env.MONGODB_URI;
-  if (!mongoURI) {
-    console.log('[DB] No MONGODB_URI provided in environment. Running with LinkPulse high-fidelity persistent JSON store.');
+  if (!mongoURI || mongoURI.includes('<password>')) {
+    console.log('[DB] Running with LinkPulse high-fidelity persistent store (MongoDB Atlas URI not set or placeholder detected).');
     return;
   }
 
   try {
-    await mongoose.connect(mongoURI, { serverSelectionTimeoutMS: 3000 });
+    await mongoose.connect(mongoURI, {
+      serverSelectionTimeoutMS: 5000,
+      autoIndex: process.env.NODE_ENV !== 'production',
+      maxPoolSize: 10
+    });
     isMongoConnected = true;
-    console.log('[DB] Successfully connected to MongoDB Atlas!');
+    console.log('[DB] Securely connected to MongoDB Atlas database cluster.');
   } catch (err) {
     console.warn(`[DB] MongoDB Atlas connection error: ${err.message}. Seamlessly falling back to LinkPulse persistent store.`);
     isMongoConnected = false;
