@@ -11,17 +11,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     async function loadUser() {
       if (!token) {
-        // Pre-fill with default Arpita demo session for quick testing if no token yet
-        try {
-          const res = await authAPI.login({ email: 'arpita@example.com', password: 'password123' });
-          if (res.token) {
-            localStorage.setItem('linkpulse_token', res.token);
-            setToken(res.token);
-            setUser(res.user);
-          }
-        } catch (e) {
-          console.warn('Initial session bootstrap:', e.message);
-        }
+        setUser(null);
         setLoading(false);
         return;
       }
@@ -30,9 +20,13 @@ export function AuthProvider({ children }) {
         const res = await authAPI.getMe();
         if (res.user) {
           setUser(res.user);
+        } else {
+          localStorage.removeItem('linkpulse_token');
+          setToken(null);
+          setUser(null);
         }
       } catch (err) {
-        console.warn('Token validation failed, resetting:', err.message);
+        console.warn('Token validation failed, clearing session:', err.message);
         localStorage.removeItem('linkpulse_token');
         setToken(null);
         setUser(null);
@@ -70,14 +64,6 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  const switchDemoRole = async (roleType) => {
-    if (roleType === 'admin') {
-      await login('admin@linkpulse.com', 'admin123');
-    } else {
-      await login('arpita@example.com', 'password123');
-    }
-  };
-
   return (
     <AuthContext.Provider
       value={{
@@ -87,7 +73,6 @@ export function AuthProvider({ children }) {
         login,
         register,
         logout,
-        switchDemoRole,
         isAuthenticated: !!user,
         isAdmin: user?.role === 'admin'
       }}

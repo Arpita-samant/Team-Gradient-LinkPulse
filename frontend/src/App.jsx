@@ -15,6 +15,15 @@ import LinkStatusPage from './pages/LinkStatusPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 
+function ProtectedRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+}
+
 function AdminRoute({ children }) {
   const { user, isAdmin, loading } = useAuth();
   if (loading) return null;
@@ -35,10 +44,31 @@ export default function App() {
 
             {/* Dashboard Layout Views */}
             <Route element={<DashboardLayout />}>
-              <Route path="/create-link" element={<CreateLinkPage />} />
+              <Route
+                path="/create-link"
+                element={
+                  <ProtectedRoute>
+                    <CreateLinkPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/qr-generator" element={<QrGeneratorPage />} />
-              <Route path="/links" element={<LinkManagementPage />} />
-              <Route path="/analytics" element={<AnalyticsDashboardPage />} />
+              <Route
+                path="/links"
+                element={
+                  <ProtectedRoute>
+                    <LinkManagementPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/analytics"
+                element={
+                  <ProtectedRoute>
+                    <AnalyticsDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/admin"
                 element={
