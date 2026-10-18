@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # LinkPulse — URL Shortener & Analytics Platform
 
 **LinkPulse** is a full-stack, enterprise-grade URL Shortener and Live Analytics Platform designed to convert long URLs into clean, branded short links. It features instant QR code generation, click & scan tracking, campaign organization, role-based access control, advanced security filtering, and an administrative control panel.
@@ -178,3 +179,6 @@ MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/linkpulse?r
 5. **Rate Limiting**: Protects against brute-force password attempts and spam URL creation.
 6. **Password Hashing**: Protects user credentials and protected links using salted bcrypt hashes.
 7. **JWT Authentication**: Role-based access tokens with strict expiration.
+=======
+# Team-Gradient-LinkPulse
+>>>>>>> d4a4cfde2041f47bda859043ea349e9ad98a94f9
