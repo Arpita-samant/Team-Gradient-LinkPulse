@@ -155,91 +155,45 @@ export default function AdminPanelPage() {
   const suspiciousLinksList = links.filter(l => l.isSuspicious);
 
   return (
-    <div className="space-y-8">
-      {/* Title Header */}
-      <div className="space-y-1">
-        <h1 className="text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-800/80 text-red-600 dark:text-red-400">
-            <ShieldCheck className="w-6 h-6" />
-          </div>
-          Admin Panel
-        </h1>
-        <p className="text-zinc-600 dark:text-zinc-400 text-sm pl-12">
-          Manage users, links, domains, and platform settings
-        </p>
-      </div>
+    <div className="space-y-6">
+      <div className="panel p-6 sm:p-8 space-y-6">
+        <span aria-hidden="true" className="pointer-events-none select-none absolute -top-2 -left-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
+        <span aria-hidden="true" className="pointer-events-none select-none absolute -top-2 -right-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
+        <span aria-hidden="true" className="pointer-events-none select-none absolute -bottom-2 -left-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
+        <span aria-hidden="true" className="pointer-events-none select-none absolute -bottom-2 -right-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
 
-      {/* Top 4 KPI Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Total Users */}
-        <div className="bg-white dark:bg-[#121217] p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-xl space-y-3 hover:border-red-500/40 transition-colors">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">Total Users</span>
-            <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-800/80 text-red-600 dark:text-red-400 flex items-center justify-center">
-              <Users className="w-4 h-4" />
-            </div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="font-ndot text-2xl text-[var(--fg)]">Admin Panel</h1>
+            <p className="text-xs text-[var(--fg2)] mt-1 font-mono">Manage users, links, domains, and platform settings</p>
           </div>
-          <div className="text-3xl font-extrabold text-zinc-900 dark:text-white">
-            {stats.totalUsers}
-          </div>
-          <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>{stats.usersGrowth}</span>
-            <span className="text-zinc-500 font-normal">last week</span>
-          </div>
+          <button
+            type="button"
+            onClick={() => setShowAddUserModal(true)}
+            className="btn btn-solid btn-sm cursor-pointer"
+          >
+            <span>Add User</span>
+          </button>
         </div>
 
-        {/* Total Links */}
-        <div className="bg-white dark:bg-[#121217] p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-xl space-y-3 hover:border-red-500/40 transition-colors">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">Total Links</span>
-            <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-800/80 text-red-600 dark:text-red-400 flex items-center justify-center">
-              <Link2 className="w-4 h-4" />
-            </div>
+        {/* 3 KPI Metrics matching the attached file */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--line)] space-y-1">
+            <span className="font-ndot text-[10px] text-[var(--fg3)]">TOTAL USERS</span>
+            <p className="font-ndot text-2xl text-[var(--fg)]">{stats.totalUsers || users.length}</p>
+            <span className="text-[10px] text-[var(--accent)] block font-ndot">↑ {stats.usersGrowth || '+10%'} last week</span>
           </div>
-          <div className="text-3xl font-extrabold text-zinc-900 dark:text-white">
-            {stats.totalLinks?.toLocaleString()}
-          </div>
-          <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>{stats.linksGrowth}</span>
-            <span className="text-zinc-500 font-normal">last week</span>
-          </div>
-        </div>
 
-        {/* Total QR Codes */}
-        <div className="bg-white dark:bg-[#121217] p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-xl space-y-3 hover:border-red-500/40 transition-colors">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">Total QR Codes</span>
-            <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-800/80 text-red-600 dark:text-red-400 flex items-center justify-center">
-              <QrCode className="w-4 h-4" />
-            </div>
+          <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--line)] space-y-1">
+            <span className="font-ndot text-[10px] text-[var(--fg3)]">TOTAL LINKS</span>
+            <p className="font-ndot text-2xl text-[var(--accent)]">{stats.totalLinks || links.length}</p>
+            <span className="text-[10px] text-[var(--accent)] block font-ndot">↑ {stats.linksGrowth || '+12%'} last week</span>
           </div>
-          <div className="text-3xl font-extrabold text-zinc-900 dark:text-white">
-            {stats.totalQRCodes}
-          </div>
-          <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-400">
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>{stats.qrGrowth}</span>
-            <span className="text-zinc-500 font-normal">last week</span>
-          </div>
-        </div>
 
-        {/* Suspicious Links */}
-        <div className="bg-[#121217] p-6 rounded-2xl border border-red-900/40 shadow-xl space-y-3 hover:border-red-500/40 transition-colors">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-red-400">Suspicious Links</span>
-            <div className="w-8 h-8 rounded-lg bg-red-950/80 border border-red-800/80 text-red-400 flex items-center justify-center">
-              <AlertTriangle className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-3xl font-extrabold text-red-400">
-            {stats.suspiciousLinks}
-          </div>
-          <div className="flex items-center gap-1.5 text-xs font-medium text-red-400">
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>{stats.suspiciousGrowth}</span>
-            <span className="text-zinc-500 font-normal">last week</span>
+          <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--line)] space-y-1">
+            <span className="font-ndot text-[10px] text-[var(--fg3)]">SUSPICIOUS LINKS</span>
+            <p className="font-ndot text-2xl text-[var(--fg)]">{stats.suspiciousLinks || suspiciousLinksList.length}</p>
+            <span className="text-[10px] text-[var(--accent)] block font-ndot">↓ {stats.suspiciousGrowth || '-50%'} last week</span>
           </div>
         </div>
       </div>
@@ -247,22 +201,22 @@ export default function AdminPanelPage() {
       {/* Main Content & Quick Actions Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Tabs & Tables (8 cols) */}
-        <div className="lg:col-span-8 bg-[#121217] rounded-2xl p-6 sm:p-7 border border-zinc-800 shadow-xl space-y-6">
+        <div className="lg:col-span-8 corner-crosshairs-all relative bg-white dark:bg-[#0A0A0A] p-6 sm:p-7 border border-[var(--line)] shadow-sm space-y-6">
           {/* Tabs row */}
-          <div className="flex items-center gap-2 border-b border-zinc-800 pb-3 overflow-x-auto text-sm font-semibold">
+          <div className="flex items-center gap-2 border-b border-[var(--line)] pb-3 overflow-x-auto text-xs font-mono">
             {['Users', 'Links', 'QR Codes', 'Suspicious Links', 'Settings'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 rounded-xl transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-3 py-1.5 uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === tab
-                    ? 'bg-red-950/80 text-red-400 border border-red-800/80'
-                    : 'text-zinc-400 hover:text-white'
+                    ? 'btn-solid text-xs'
+                    : 'btn-line text-xs'
                 }`}
               >
                 {tab}
                 {tab === 'Suspicious Links' && suspiciousLinksList.length > 0 && (
-                  <span className="ml-1.5 px-1.5 py-0.5 text-[10px] bg-red-600 text-white rounded-full">
+                  <span className="ml-1.5 px-1 py-0.2 text-[9px] bg-white text-black font-bold">
                     {suspiciousLinksList.length}
                   </span>
                 )}
@@ -272,77 +226,77 @@ export default function AdminPanelPage() {
 
           {/* Tab 1: Users Table */}
           {activeTab === 'Users' && (
-            <div className="space-y-4">
+            <div className="space-y-4 font-mono">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="relative flex-1 max-w-sm">
-                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
                   <input
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search users by name or email..."
-                    className="w-full pl-9 pr-4 py-2 text-sm bg-zinc-900 border border-zinc-750 rounded-xl text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500/30"
+                    placeholder="Search accounts..."
+                    className="w-full pl-9 pr-4 py-2 text-xs bg-zinc-50 dark:bg-black border border-[var(--line)] text-black dark:text-white placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:border-[#D71921]"
                   />
                 </div>
-                <span className="text-xs text-zinc-400 font-medium self-end sm:self-auto">
-                  Total Users: {filteredUsers.length}
+                <span className="text-[11px] text-zinc-500 uppercase self-end sm:self-auto">
+                  REGISTERED: [{filteredUsers.length}]
                 </span>
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-zinc-900/80 text-xs font-semibold text-zinc-400 border-b border-zinc-800">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead className="bg-zinc-50 dark:bg-black text-[10px] text-zinc-500 border-b border-[var(--line)] uppercase tracking-wider">
                     <tr>
-                      <th className="px-4 py-3">Name</th>
-                      <th className="px-4 py-3">Email</th>
-                      <th className="px-4 py-3">Role</th>
-                      <th className="px-4 py-3">Status</th>
-                      <th className="px-4 py-3">Created At</th>
-                      <th className="px-4 py-3 text-right">Actions</th>
+                      <th className="px-4 py-3">IDENTITY</th>
+                      <th className="px-4 py-3">EMAIL</th>
+                      <th className="px-4 py-3">ROLE</th>
+                      <th className="px-4 py-3">STATUS</th>
+                      <th className="px-4 py-3">CREATED</th>
+                      <th className="px-4 py-3 text-right">ACTION</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-zinc-800/60">
+                  <tbody className="divide-y divide-[var(--line)]">
                     {filteredUsers.map((u) => {
                       const initials = u.name
                         ? u.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
                         : 'U';
 
                       return (
-                        <tr key={u._id} className="hover:bg-zinc-850/40 text-xs">
-                          {/* Avatar Circle + Name */}
-                          <td className="px-4 py-3.5 font-medium whitespace-nowrap">
+                        <tr key={u._id} className="hover:bg-zinc-100/50 dark:hover:bg-zinc-900/40">
+                          {/* Avatar Initials + Name */}
+                          <td className="px-4 py-3.5 whitespace-nowrap">
                             <div className="flex items-center gap-2.5">
-                              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-red-600 to-rose-600 text-white font-bold text-[11px] flex items-center justify-center shadow-xs">
+                              <div className="w-6 h-6 border border-[var(--line)] bg-zinc-100 dark:bg-zinc-900 text-black dark:text-white font-bold text-[10px] flex items-center justify-center">
                                 {initials}
                               </div>
-                              <span className="font-semibold text-white">
+                              <span className="font-bold text-black dark:text-white">
                                 {u.name}
                               </span>
                             </div>
                           </td>
 
-                          <td className="px-4 py-3.5 font-mono text-zinc-400">
+                          <td className="px-4 py-3.5 text-zinc-600 dark:text-zinc-400">
                             {u.email}
                           </td>
 
                           <td className="px-4 py-3.5">
-                            <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${
+                            <span className={`px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider border ${
                               u.role === 'admin'
-                                ? 'bg-red-950/80 text-red-300 border border-red-800/80'
-                                : 'bg-zinc-800 text-zinc-300 border border-zinc-700'
+                                ? 'border-[#D71921] text-[#D71921] bg-red-500/10'
+                                : 'border-zinc-400 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 bg-transparent'
                             }`}>
-                              {u.role === 'admin' ? 'Admin' : 'User'}
+                              [{u.role === 'admin' ? 'ROOT' : 'USER'}]
                             </span>
                           </td>
 
                           <td className="px-4 py-3.5">
-                            <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
-                              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                              <span>Active</span>
+                            <div className="flex items-center gap-1.5 text-black dark:text-white text-[11px]">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#D71921]"></span>
+                              <span>ACTIVE</span>
                             </div>
                           </td>
 
-                          <td className="px-4 py-3.5 text-zinc-400 whitespace-nowrap">
+                          <td className="px-4 py-3.5 text-zinc-500 whitespace-nowrap text-[11px]">
                             {new Date(u.createdAt).toLocaleDateString('en-US', {
                               month: 'short',
                               day: 'numeric',
@@ -350,10 +304,10 @@ export default function AdminPanelPage() {
                             })}
                           </td>
 
-                          <td className="px-4 py-3.5 text-right whitespace-nowrap space-x-1">
+                          <td className="px-4 py-3.5 text-right whitespace-nowrap">
                             <button
                               onClick={() => handleDeleteUser(u._id, u.email)}
-                              className="p-1 text-zinc-400 hover:text-red-400 transition-colors cursor-pointer"
+                              className="p-1 text-zinc-400 hover:text-[#D71921] transition-colors cursor-pointer"
                               title="Delete user"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -370,57 +324,57 @@ export default function AdminPanelPage() {
 
           {/* Tab 2: Links / Suspicious Links */}
           {(activeTab === 'Links' || activeTab === 'Suspicious Links') && (
-            <div className="space-y-4">
-              <div className="text-xs text-zinc-400">
+            <div className="space-y-4 font-mono">
+              <div className="text-xs text-zinc-500 uppercase tracking-wider">
                 {activeTab === 'Suspicious Links'
-                  ? 'Links identified with unsafe destination patterns or reported domains.'
-                  : 'All shortened URLs across all registered users on LinkPulse.'}
+                  ? 'CRITICAL // MALICIOUS DESTINATION SURVEILLANCE'
+                  : 'GLOBAL TELEMETRY // ALL ENCODED SHORT LINKS'}
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-zinc-900/80 text-xs font-semibold text-zinc-400 border-b border-zinc-800">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead className="bg-zinc-50 dark:bg-black text-[10px] text-zinc-500 border-b border-[var(--line)] uppercase tracking-wider">
                     <tr>
-                      <th className="px-4 py-3">Short URL</th>
-                      <th className="px-4 py-3">Destination</th>
-                      <th className="px-4 py-3">Clicks</th>
-                      <th className="px-4 py-3">Security Status</th>
-                      <th className="px-4 py-3 text-right">Actions</th>
+                      <th className="px-4 py-3">SHORT HASH</th>
+                      <th className="px-4 py-3">DESTINATION</th>
+                      <th className="px-4 py-3">CLICKS</th>
+                      <th className="px-4 py-3">INTEGRITY</th>
+                      <th className="px-4 py-3 text-right">ACTION</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-zinc-800/60">
+                  <tbody className="divide-y divide-[var(--line)]">
                     {(activeTab === 'Suspicious Links' ? suspiciousLinksList : links).map((l) => (
-                      <tr key={l._id} className="hover:bg-zinc-850/40 text-xs">
-                        <td className="px-4 py-3.5 font-mono font-bold text-red-400">
-                          {l.shortCode}
+                      <tr key={l._id} className="hover:bg-zinc-100/50 dark:hover:bg-zinc-900/40">
+                        <td className="px-4 py-3.5 font-bold text-[#D71921]">
+                          /{l.shortCode}
                         </td>
-                        <td className="px-4 py-3.5 font-mono text-zinc-400 max-w-xs truncate">
+                        <td className="px-4 py-3.5 text-zinc-600 dark:text-zinc-400 max-w-xs truncate">
                           {l.originalUrl}
                         </td>
-                        <td className="px-4 py-3.5 font-semibold text-zinc-200">
+                        <td className="px-4 py-3.5 font-bold text-black dark:text-white">
                           {l.clicks || 0}
                         </td>
                         <td className="px-4 py-3.5">
                           {l.isSuspicious ? (
-                            <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-950 text-red-400 border border-red-800">
-                              Suspicious / Blocked
+                            <span className="px-2 py-0.5 text-[10px] uppercase font-mono border border-[#D71921] text-[#D71921] bg-red-500/10">
+                              [FLAGGED / BLOCKED]
                             </span>
                           ) : (
-                            <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/60">
-                              Clean / Active
+                            <span className="px-2 py-0.5 text-[10px] uppercase font-mono border border-zinc-400 dark:border-zinc-700 text-black dark:text-white">
+                              [CLEAN]
                             </span>
                           )}
                         </td>
-                        <td className="px-4 py-3.5 text-right space-x-2">
+                        <td className="px-4 py-3.5 text-right">
                           <button
                             onClick={() => handleToggleSuspicious(l._id)}
-                            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                            className={`px-3 py-1 text-[11px] font-mono uppercase tracking-wider cursor-pointer ${
                               l.isSuspicious
-                                ? 'bg-emerald-600 text-white hover:bg-emerald-500'
-                                : 'bg-red-600 text-white hover:bg-red-500'
+                                ? 'btn-line'
+                                : 'btn-solid'
                             }`}
                           >
-                            {l.isSuspicious ? 'Unblock Link' : 'Disable / Flag'}
+                            {l.isSuspicious ? 'UNBLOCK' : 'INTERCEPT'}
                           </button>
                         </td>
                       </tr>
@@ -433,28 +387,28 @@ export default function AdminPanelPage() {
 
           {/* Tab 3: Settings / Blocked Domains */}
           {activeTab === 'Settings' && (
-            <div className="space-y-6">
-              <div>
-                <h3 className="font-bold text-base text-white mb-1">
-                  Security Blocklist & Domain Protection
+            <div className="space-y-6 font-mono">
+              <div className="border-b border-[var(--line)] pb-3">
+                <h3 className="font-bold text-sm text-black dark:text-white uppercase tracking-wider">
+                  SECURITY BLACKLIST & PHISHING BARRIER
                 </h3>
-                <p className="text-xs text-zinc-400">
-                  Target URLs matching blocked domains cannot be shortened or redirected by users.
+                <p className="text-xs text-zinc-500 mt-0.5">
+                  Origins matching these hostnames are rejected at link ingestion.
                 </p>
               </div>
 
               <div className="space-y-2">
                 {blockedDomains.map(d => (
-                  <div key={d.domain} className="flex items-center justify-between p-3 rounded-xl bg-zinc-900 border border-zinc-750 text-xs">
+                  <div key={d.domain} className="flex items-center justify-between p-3 border border-[var(--line)] bg-zinc-50 dark:bg-black text-xs">
                     <div>
-                      <span className="font-mono font-semibold text-red-400">{d.domain}</span>
-                      <span className="text-zinc-500 ml-2">({d.reason})</span>
+                      <span className="font-bold text-[#D71921]">{d.domain}</span>
+                      <span className="text-zinc-500 ml-2">[{d.reason}]</span>
                     </div>
                     <button
                       onClick={() => handleRemoveBlockedDomain(d.domain)}
-                      className="text-xs text-zinc-400 hover:text-red-400 font-semibold cursor-pointer"
+                      className="text-xs text-zinc-400 hover:text-[#D71921] uppercase font-semibold cursor-pointer"
                     >
-                      Remove
+                      DELETE
                     </button>
                   </div>
                 ))}
@@ -464,58 +418,61 @@ export default function AdminPanelPage() {
         </div>
 
         {/* Right Column: Quick Actions Sidebar (4 cols) */}
-        <div className="lg:col-span-4 bg-[#121217] rounded-2xl p-6 sm:p-7 border border-zinc-800 shadow-xl space-y-5">
-          <h2 className="text-base font-bold text-white">
-            Quick Actions
-          </h2>
+        <div className="lg:col-span-4 corner-crosshairs-all relative bg-white dark:bg-[#0A0A0A] p-6 sm:p-7 border border-[var(--line)] shadow-sm space-y-5 font-mono">
+          <div className="border-b border-[var(--line)] pb-3">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-black dark:text-white flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#D71921]"></span>
+              COMMAND DISPATCH
+            </h2>
+          </div>
 
           <div className="space-y-3">
             {/* Add User */}
             <button
               onClick={() => setShowAddUserModal(true)}
-              className="w-full p-4 rounded-xl bg-red-950/40 hover:bg-red-900/40 border border-red-800/60 text-red-300 flex items-center justify-between font-semibold text-sm transition-all cursor-pointer"
+              className="w-full p-3.5 border border-[var(--line)] hover:border-[#D71921] bg-zinc-50 dark:bg-black text-black dark:text-white flex items-center justify-between text-xs uppercase tracking-wider transition-all cursor-pointer"
             >
-              <div className="flex items-center gap-3">
-                <UserPlus className="w-5 h-5 text-red-400" />
-                <span>Add User</span>
+              <div className="flex items-center gap-2.5">
+                <UserPlus className="w-4 h-4 text-[#D71921]" />
+                <span>ENROLL USER</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-red-400" />
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-400" />
             </button>
 
             {/* Block Domain */}
             <button
               onClick={() => setShowBlockDomainModal(true)}
-              className="w-full p-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 flex items-center justify-between font-semibold text-sm transition-all cursor-pointer border border-zinc-750"
+              className="w-full p-3.5 border border-[var(--line)] hover:border-[#D71921] bg-zinc-50 dark:bg-black text-black dark:text-white flex items-center justify-between text-xs uppercase tracking-wider transition-all cursor-pointer"
             >
-              <div className="flex items-center gap-3">
-                <ShieldBan className="w-5 h-5 text-red-400" />
-                <span>Block Domain</span>
+              <div className="flex items-center gap-2.5">
+                <ShieldBan className="w-4 h-4 text-[#D71921]" />
+                <span>BLOCK DOMAIN</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-zinc-500" />
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-400" />
             </button>
 
             {/* View Suspicious Links */}
             <button
               onClick={() => setActiveTab('Suspicious Links')}
-              className="w-full p-4 rounded-xl bg-red-950/50 hover:bg-red-900/50 border border-red-800/70 text-red-300 flex items-center justify-between font-semibold text-sm transition-all cursor-pointer"
+              className="w-full p-3.5 border border-[#D71921] bg-red-500/5 text-[#D71921] flex items-center justify-between text-xs uppercase tracking-wider transition-all cursor-pointer"
             >
-              <div className="flex items-center gap-3">
-                <AlertTriangle className="w-5 h-5 text-red-400" />
-                <span>View Suspicious Links</span>
+              <div className="flex items-center gap-2.5">
+                <AlertTriangle className="w-4 h-4" />
+                <span>THREAT QUEUE</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-red-400" />
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
 
             {/* System Logs */}
             <button
               onClick={openLogs}
-              className="w-full p-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 flex items-center justify-between font-semibold text-sm transition-all cursor-pointer border border-zinc-750"
+              className="w-full p-3.5 border border-[var(--line)] hover:border-[#D71921] bg-zinc-50 dark:bg-black text-black dark:text-white flex items-center justify-between text-xs uppercase tracking-wider transition-all cursor-pointer"
             >
-              <div className="flex items-center gap-3">
-                <FileText className="w-5 h-5 text-zinc-400" />
-                <span>System Logs</span>
+              <div className="flex items-center gap-2.5">
+                <FileText className="w-4 h-4 text-zinc-400" />
+                <span>AUDIT LOGS</span>
               </div>
-              <ChevronRight className="w-4 h-4 text-zinc-500" />
+              <ChevronRight className="w-3.5 h-3.5 text-zinc-400" />
             </button>
           </div>
         </div>
@@ -523,69 +480,69 @@ export default function AdminPanelPage() {
 
       {/* Add User Modal */}
       {showAddUserModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="bg-[#121217] rounded-2xl max-w-md w-full p-6 shadow-2xl border border-zinc-800 space-y-4">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
-              <h3 className="font-bold text-base text-white">Add New User</h3>
-              <button onClick={() => setShowAddUserModal(false)} className="text-zinc-400 hover:text-white cursor-pointer">
-                <X className="w-5 h-5" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs font-mono">
+          <div className="corner-crosshairs-all relative bg-white dark:bg-[#0A0A0A] max-w-md w-full p-6 border border-[var(--line)] shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-black dark:text-white">ENROLL NEW IDENTITY</h3>
+              <button onClick={() => setShowAddUserModal(false)} className="text-zinc-400 hover:text-black dark:hover:text-white cursor-pointer">
+                <X className="w-4 h-4" />
               </button>
             </div>
-            <form onSubmit={handleCreateUser} className="space-y-4 text-sm">
+            <form onSubmit={handleCreateUser} className="space-y-4 text-xs font-mono">
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1">Full Name</label>
+                <label className="block uppercase tracking-wider text-zinc-700 dark:text-zinc-300 mb-1">Full Name</label>
                 <input
                   type="text"
                   required
                   value={newUserData.name}
                   onChange={(e) => setNewUserData({ ...newUserData, name: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-750 text-white focus:outline-none focus:ring-2 focus:ring-red-500/30"
+                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-black border border-[var(--line)] text-black dark:text-white focus:outline-none focus:border-[#D71921]"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1">Email (@gmail.com)</label>
+                <label className="block uppercase tracking-wider text-zinc-700 dark:text-zinc-300 mb-1">Email (@gmail.com)</label>
                 <input
                   type="email"
                   required
                   value={newUserData.email}
                   onChange={(e) => setNewUserData({ ...newUserData, email: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-750 text-white focus:outline-none focus:ring-2 focus:ring-red-500/30"
+                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-black border border-[var(--line)] text-black dark:text-white focus:outline-none focus:border-[#D71921]"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1">Initial Password</label>
+                <label className="block uppercase tracking-wider text-zinc-700 dark:text-zinc-300 mb-1">Initial Password</label>
                 <input
                   type="password"
                   required
                   value={newUserData.password}
                   onChange={(e) => setNewUserData({ ...newUserData, password: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-750 text-white focus:outline-none focus:ring-2 focus:ring-red-500/30"
+                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-black border border-[var(--line)] text-black dark:text-white focus:outline-none focus:border-[#D71921]"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1">Role</label>
+                <label className="block uppercase tracking-wider text-zinc-700 dark:text-zinc-300 mb-1">Access Role</label>
                 <select
                   value={newUserData.role}
                   onChange={(e) => setNewUserData({ ...newUserData, role: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-750 text-zinc-200 focus:outline-none"
+                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-black border border-[var(--line)] text-black dark:text-white focus:outline-none focus:border-[#D71921]"
                 >
-                  <option value="user" className="bg-[#121217]">User</option>
-                  <option value="admin" className="bg-[#121217]">Admin</option>
+                  <option value="user" className="bg-white dark:bg-black">USER</option>
+                  <option value="admin" className="bg-white dark:bg-black">ADMIN (ROOT)</option>
                 </select>
               </div>
-              <div className="flex justify-end gap-2 pt-2">
+              <div className="flex justify-end gap-2 pt-2 border-t border-[var(--line)]">
                 <button
                   type="button"
                   onClick={() => setShowAddUserModal(false)}
-                  className="px-4 py-2 rounded-xl border border-zinc-750 text-zinc-300 hover:bg-zinc-800 font-medium cursor-pointer"
+                  className="btn-line px-4 py-2 text-xs uppercase cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold shadow-md shadow-red-600/30 cursor-pointer"
+                  className="btn-solid px-5 py-2 text-xs uppercase cursor-pointer"
                 >
-                  Create User
+                  CREATE IDENTITY
                 </button>
               </div>
             </form>
@@ -595,49 +552,49 @@ export default function AdminPanelPage() {
 
       {/* Block Domain Modal */}
       {showBlockDomainModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="bg-[#121217] rounded-2xl max-w-md w-full p-6 shadow-2xl border border-zinc-800 space-y-4">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
-              <h3 className="font-bold text-base text-white">Block Malicious Domain</h3>
-              <button onClick={() => setShowBlockDomainModal(false)} className="text-zinc-400 hover:text-white cursor-pointer">
-                <X className="w-5 h-5" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs font-mono">
+          <div className="corner-crosshairs-all relative bg-white dark:bg-[#0A0A0A] max-w-md w-full p-6 border border-[var(--line)] shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-black dark:text-white">ENFORCE DOMAIN BAN</h3>
+              <button onClick={() => setShowBlockDomainModal(false)} className="text-zinc-400 hover:text-black dark:hover:text-white cursor-pointer">
+                <X className="w-4 h-4" />
               </button>
             </div>
-            <form onSubmit={handleAddBlockedDomain} className="space-y-4 text-sm">
+            <form onSubmit={handleAddBlockedDomain} className="space-y-4 text-xs font-mono">
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1">Domain Hostname</label>
+                <label className="block uppercase tracking-wider text-zinc-700 dark:text-zinc-300 mb-1">Target Hostname</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. evil-phishing-site.com"
                   value={newDomainData.domain}
                   onChange={(e) => setNewDomainData({ ...newDomainData, domain: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-750 font-mono text-xs text-white focus:outline-none focus:ring-2 focus:ring-red-500/30"
+                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-black border border-[var(--line)] text-black dark:text-white focus:outline-none focus:border-[#D71921]"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1">Reason</label>
+                <label className="block uppercase tracking-wider text-zinc-700 dark:text-zinc-300 mb-1">Classification Reason</label>
                 <input
                   type="text"
                   placeholder="Phishing, Malware, Spam"
                   value={newDomainData.reason}
                   onChange={(e) => setNewDomainData({ ...newDomainData, reason: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-900 border border-zinc-750 text-white focus:outline-none focus:ring-2 focus:ring-red-500/30"
+                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-black border border-[var(--line)] text-black dark:text-white focus:outline-none focus:border-[#D71921]"
                 />
               </div>
-              <div className="flex justify-end gap-2 pt-2">
+              <div className="flex justify-end gap-2 pt-2 border-t border-[var(--line)]">
                 <button
                   type="button"
                   onClick={() => setShowBlockDomainModal(false)}
-                  className="px-4 py-2 rounded-xl border border-zinc-750 text-zinc-300 hover:bg-zinc-800 font-medium cursor-pointer"
+                  className="btn-line px-4 py-2 text-xs uppercase cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold shadow-md shadow-red-600/30 cursor-pointer"
+                  className="btn-solid px-5 py-2 text-xs uppercase cursor-pointer"
                 >
-                  Block Domain
+                  BLOCK DOMAIN
                 </button>
               </div>
             </form>
@@ -647,25 +604,25 @@ export default function AdminPanelPage() {
 
       {/* System Logs Modal */}
       {showLogsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="bg-[#121217] rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-zinc-800 space-y-4 max-h-[80vh] flex flex-col">
-            <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
-              <h3 className="font-bold text-base text-white flex items-center gap-2">
-                <FileText className="w-5 h-5 text-red-500" />
-                Security & System Audit Logs
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs font-mono">
+          <div className="corner-crosshairs-all relative bg-white dark:bg-[#0A0A0A] max-w-2xl w-full p-6 border border-[var(--line)] shadow-2xl space-y-4 max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
+              <h3 className="font-bold text-xs uppercase tracking-wider text-black dark:text-white flex items-center gap-2">
+                <FileText className="w-4 h-4 text-[#D71921]" />
+                AUDIT TELEMETRY LOGS
               </h3>
-              <button onClick={() => setShowLogsModal(false)} className="text-zinc-400 hover:text-white cursor-pointer">
-                <X className="w-5 h-5" />
+              <button onClick={() => setShowLogsModal(false)} className="text-zinc-400 hover:text-black dark:hover:text-white cursor-pointer">
+                <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-2 pr-1">
               {systemLogs.map(log => (
-                <div key={log._id} className="p-3 rounded-xl bg-zinc-900 border border-zinc-800 text-xs flex items-start justify-between gap-3 font-mono">
+                <div key={log._id} className="p-3 border border-[var(--line)] bg-zinc-50 dark:bg-black text-xs flex items-start justify-between gap-3 font-mono">
                   <div>
-                    <span className="font-bold text-red-400">[{log.action}]</span>{' '}
-                    <span className="text-zinc-300 font-sans">{log.details}</span>
-                    <div className="text-[10px] text-zinc-500 mt-1 font-mono">IP: {log.ip} {log.userEmail ? `| User: ${log.userEmail}` : ''}</div>
+                    <span className="font-bold text-[#D71921]">[{log.action}]</span>{' '}
+                    <span className="text-zinc-800 dark:text-zinc-200">{log.details}</span>
+                    <div className="text-[10px] text-zinc-500 mt-1">IP: {log.ip} {log.userEmail ? `| USER: ${log.userEmail}` : ''}</div>
                   </div>
                   <span className="text-[10px] text-zinc-500 whitespace-nowrap">
                     {new Date(log.timestamp).toLocaleTimeString()}
@@ -674,12 +631,12 @@ export default function AdminPanelPage() {
               ))}
             </div>
 
-            <div className="pt-2 flex justify-end">
+            <div className="pt-2 flex justify-end border-t border-[var(--line)]">
               <button
                 onClick={() => setShowLogsModal(false)}
-                className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-750 text-zinc-200 font-semibold text-xs cursor-pointer"
+                className="btn-line px-4 py-2 text-xs uppercase cursor-pointer"
               >
-                Close
+                DISMISS
               </button>
             </div>
           </div>

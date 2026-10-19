@@ -2,21 +2,14 @@ import React from 'react';
 
 export default function Footer() {
   return (
-    <footer className="mt-auto py-6 border-t border-zinc-200 dark:border-zinc-850 text-xs text-zinc-500 dark:text-zinc-500 text-center transition-colors">
-      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 px-4">
-        <span>© 2026 LinkPulse. All rights reserved.</span>
-        <span className="hidden sm:inline text-zinc-300 dark:text-zinc-750">|</span>
-        <a href="#privacy" className="hover:text-red-500 dark:hover:text-red-400 transition-colors">
-          Privacy Policy
-        </a>
-        <span className="hidden sm:inline text-zinc-750">|</span>
-        <a href="#terms" className="hover:text-red-400 transition-colors">
-          Terms of Service
-        </a>
-        <span className="hidden sm:inline text-zinc-750">|</span>
-        <a href="#contact" className="hover:text-red-400 transition-colors">
-          Contact Us
-        </a>
+    <footer className="relative z-10 w-full border-t border-[var(--line)] bg-[var(--glass)] backdrop-blur-md py-6 px-4 sm:px-6">
+      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--fg3)] font-ndot">
+        <span>© 2026 Link Pulse. All rights reserved.</span>
+        <div className="flex items-center gap-4">
+          <a href="#privacy" onClick={(e) => { e.preventDefault(); alert('Privacy Policy'); }} className="hover:text-[var(--fg)] cursor-pointer">Privacy Policy</a>
+          <a href="#terms" onClick={(e) => { e.preventDefault(); alert('Terms of Service'); }} className="hover:text-[var(--fg)] cursor-pointer">Terms of Service</a>
+          <a href="#contact" onClick={(e) => { e.preventDefault(); alert('Contact Us'); }} className="hover:text-[var(--fg)] cursor-pointer">Contact Us</a>
+        </div>
       </div>
     </footer>
   );

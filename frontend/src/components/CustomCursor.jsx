@@ -65,14 +65,14 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* Outer smooth trailing ring */}
+      {/* Outer smooth trailing ring with technical Nothing OS crosshair ring */}
       <div
-        className={`fixed top-0 left-0 pointer-events-none z-[9998] rounded-full transition-all duration-150 ease-out -translate-x-1/2 -translate-y-1/2 ${
+        className={`fixed top-0 left-0 pointer-events-none z-[9998] rounded-full transition-all duration-100 ease-out -translate-x-1/2 -translate-y-1/2 ${
           isHovered
-            ? 'w-10 h-10 border-2 border-red-500 bg-red-500/10 scale-125'
+            ? 'w-10 h-10 border border-[#D71921] bg-[#D71921]/15 scale-125'
             : isClicking
-            ? 'w-7 h-7 border border-red-400 bg-red-600/20 scale-90'
-            : 'w-8 h-8 border border-red-500/50 bg-transparent'
+            ? 'w-6 h-6 border border-[#D71921] bg-[#D71921]/30 scale-90'
+            : 'w-7 h-7 border border-[#D71921]/60 bg-transparent'
         }`}
         style={{
           left: `${trailingPos.x}px`,
@@ -80,10 +80,10 @@ export default function CustomCursor() {
         }}
       />
 
-      {/* Inner pinpoint dot */}
+      {/* Inner pinpoint red dot */}
       <div
         className={`fixed top-0 left-0 pointer-events-none z-[9999] rounded-full -translate-x-1/2 -translate-y-1/2 transition-transform duration-75 ${
-          isHovered ? 'w-2 h-2 bg-red-400 scale-150' : 'w-1.5 h-1.5 bg-red-500'
+          isHovered ? 'w-2 h-2 bg-[#D71921] scale-150 shadow-[0_0_8px_#D71921]' : 'w-1.5 h-1.5 bg-[#D71921]'
         }`}
         style={{
           left: `${pos.x}px`,

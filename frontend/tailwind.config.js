@@ -9,32 +9,40 @@ export default {
     extend: {
       fontFamily: {
         sans: ['"Space Grotesk"', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['"Space Mono"', 'monospace'],
+        mono: ['"JetBrains Mono"', '"Space Mono"', 'monospace'],
+        dot: ['"DotGothic16"', '"JetBrains Mono"', 'monospace'],
+        ndot: ['"DotGothic16"', '"JetBrains Mono"', 'monospace'],
       },
       colors: {
-        dark: {
-          bg: '#08080a',
-          surface: '#121217',
-          card: '#181820',
-          border: '#272732',
+        accent: {
+          DEFAULT: '#D71921',
+          hover: '#b5141b',
+          dim: 'rgba(215, 25, 33, 0.12)',
         },
-        primary: {
-          50: '#fef2f2',
-          100: '#fee2e2',
-          200: '#fecaca',
-          300: '#fca5a5',
-          400: '#f87171',
-          500: '#ef4444',
-          600: '#dc2626',
-          700: '#b91c1c',
-          800: '#991b1b',
-          900: '#7f1d1d',
-          950: '#450a0a',
-        }
+        nothing: {
+          black: '#000000',
+          white: '#FFFFFF',
+          red: '#D71921',
+          'red-hover': '#b5141b',
+          'surface-dark': '#0D0D0D',
+          'surface-light': '#F7F7F7',
+          'subtle-dark': '#141414',
+          'subtle-light': '#EFEFEF',
+          'line-dark': '#222222',
+          'line-light': '#E5E5E5',
+          'muted-dark': '#777777',
+          'muted-light': '#888888',
+        },
+        dark: {
+          bg: '#000000',
+          surface: '#0D0D0D',
+          card: '#121212',
+          border: '#222222',
+        },
       },
       boxShadow: {
-        'glow-red': '0 0 25px -5px rgba(239, 68, 68, 0.4)',
-        'glow-red-lg': '0 0 40px -5px rgba(220, 38, 38, 0.5)',
+        'nothing-red': '0 0 20px -3px rgba(215, 25, 33, 0.45)',
+        'nothing-card': '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
       }
     },
   },

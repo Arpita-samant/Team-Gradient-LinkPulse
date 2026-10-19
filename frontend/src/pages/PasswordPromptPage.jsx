@@ -29,57 +29,65 @@ export default function PasswordPromptPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100">
-      <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-slate-200 dark:border-slate-700/80 space-y-6 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-[#5850ec] dark:text-indigo-400 mx-auto flex items-center justify-center shadow-inner">
-          <Lock className="w-8 h-8" />
+    <div className="min-h-screen flex items-center justify-center p-6 bg-white dark:bg-black dot-matrix-bg text-black dark:text-white font-mono">
+      <div className="corner-crosshairs-all relative max-w-md w-full bg-white dark:bg-[#0A0A0A] p-8 border border-[var(--line)] shadow-2xl space-y-6 text-center">
+        <div className="flex items-center justify-center gap-2 text-xs font-mono text-zinc-500 uppercase tracking-widest">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#D71921] animate-pulse"></span>
+          <span>SECURITY CHALLENGE</span>
+        </div>
+
+        <div className="w-14 h-14 border border-[var(--line)] text-[#D71921] mx-auto flex items-center justify-center">
+          <Lock className="w-6 h-6" />
         </div>
 
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Protected Link
+          <h1 className="text-2xl font-extrabold tracking-tight font-sans text-black dark:text-white">
+            Encrypted Link Target
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Link <span className="font-mono font-semibold text-indigo-600 dark:text-indigo-400">/{shortCode}</span> requires a password to access the destination.
+          <p className="text-xs text-zinc-500 font-mono">
+            Destination <span className="font-bold text-[#D71921]">/{shortCode}</span> enforces passphrase clearance.
           </p>
         </div>
 
         {error && (
-          <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-600 dark:text-rose-300 text-xs flex items-center justify-center gap-2">
+          <div className="p-3 bg-red-500/10 border border-[#D71921]/40 text-[#D71921] text-xs font-mono flex items-center justify-center gap-2">
             <AlertCircle className="w-4 h-4" />
             <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4 text-left">
+        <form onSubmit={handleSubmit} className="space-y-4 text-left font-mono">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-              Enter Password
-            </label>
+            <div className="flex items-center justify-between text-xs mb-1">
+              <label className="font-semibold uppercase tracking-wider text-black dark:text-white">
+                Passphrase Required
+              </label>
+              <span className="text-zinc-500">[KEY]</span>
+            </div>
             <input
               type="password"
               required
               autoFocus
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full px-4 py-3 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5850ec]"
+              placeholder="••••••••••••"
+              className="w-full px-4 py-3 text-xs bg-zinc-50 dark:bg-black border border-[var(--line)] text-black dark:text-white focus:outline-none focus:border-[#D71921]"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-6 rounded-xl font-semibold text-white bg-[#5850ec] hover:bg-indigo-600 active:scale-[0.99] transition-all shadow-md shadow-indigo-500/25 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="btn-solid w-full py-3 px-6 text-xs font-mono uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
-            <span>{loading ? 'Verifying...' : 'Access Link'}</span>
+            <span>{loading ? 'AUTHENTICATING...' : 'AUTHORIZE INGRESS'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
 
-        <div className="pt-2 text-[11px] text-slate-400 flex items-center justify-center gap-1">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-          <span>Secured by LinkPulse Safe Redirection Engine</span>
+        <div className="pt-2 text-[10px] text-zinc-500 uppercase flex items-center justify-center gap-1.5">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#D71921]" />
+          <span>LINKPULSE // CRYPTOGRAPHIC GATEWAY</span>
         </div>
       </div>
     </div>

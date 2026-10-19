@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import {
@@ -7,10 +7,8 @@ import {
   Moon,
   ChevronDown,
   LogOut,
-  ShieldAlert,
   Menu,
-  BarChart3,
-  Link2
+  ShieldAlert
 } from 'lucide-react';
 
 export default function Navbar({ onToggleSidebar }) {
@@ -18,140 +16,103 @@ export default function Navbar({ onToggleSidebar }) {
   const { theme, toggleTheme } = useTheme();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
-  const displayName = user?.name ? user.name.split(' ')[0] : 'Guest';
+  const getPageTitle = (path) => {
+    switch (path) {
+      case '/analytics': return 'TELEMETRY // ANALYTIC DASHBOARD';
+      case '/create-link': return 'SHORT LINK // GENERATOR';
+      case '/qr-generator': return 'MATRIX // QR GENERATOR';
+      case '/links': return 'INVENTORY // LINK MANAGEMENT';
+      case '/admin': return 'ROOT // ADMINISTRATIVE CONTROLS';
+      default: return 'CONSOLE';
+    }
+  };
+
+  const displayName = user?.name ? user.name.split(' ')[0] : 'User';
   const initial = user?.name ? user.name.charAt(0).toUpperCase() : 'U';
 
   return (
-    <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#08080a]/95 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 transition-colors">
-      <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 gap-3">
-        {/* Left: Mobile hamburger menu button */}
+    <header className="sticky top-0 z-30 bg-[var(--surface)]/90 backdrop-blur-md border-b border-[var(--line)] transition-colors">
+      <div className="flex items-center justify-between px-4 sm:px-6 h-16 gap-3">
+        {/* Left: Mobile hamburger + Active module title */}
         <div className="flex items-center gap-3">
           {onToggleSidebar && (
             <button
               onClick={onToggleSidebar}
-              className="lg:hidden p-2 rounded-xl text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-850 active:scale-[0.98] transition-all cursor-pointer"
+              className="lg:hidden p-2 rounded-sm border border-[var(--line)] text-[var(--fg-muted)] hover:text-[var(--fg)] hover:border-[var(--fg-muted)] cursor-pointer"
               aria-label="Toggle sidebar"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-4 h-4" />
             </button>
           )}
 
-          {/* Minimal breadcrumb / title badge on mobile */}
-          <div className="lg:hidden flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-red-600 to-rose-600 flex items-center justify-center text-white shadow-sm shadow-red-600/30">
-              <Link2 className="w-3.5 h-3.5 -rotate-45" />
-            </div>
-            <span className="font-bold text-sm tracking-tight text-zinc-900 dark:text-white">LinkPulse</span>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse hidden sm:inline-block" />
+            <span className="font-mono text-xs tracking-wider uppercase text-[var(--fg)] font-semibold">
+              {getPageTitle(location.pathname)}
+            </span>
           </div>
         </div>
 
-        {/* Right Nav Utilities */}
-        <div className="flex items-center space-x-2 sm:space-x-3">
-          {/* Dark / Light Mode Toggle Button */}
+        {/* Right Nav Controls: Theme Toggle + User Dropdown */}
+        <div className="flex items-center gap-3">
+          {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
             aria-label={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            className="p-2 sm:px-2.5 sm:py-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 dark:hover:text-white border border-zinc-200 dark:border-zinc-800 transition-all active:scale-95 cursor-pointer flex items-center gap-1.5 shadow-xs"
+            className="p-2 rounded-sm border border-[var(--line)] bg-[var(--surface-subtle)] text-[var(--fg)] hover:border-[var(--fg-muted)] transition-all cursor-pointer flex items-center gap-1.5"
           >
             {theme === 'dark' ? (
-              <>
-                <Sun className="w-4 h-4 text-amber-400 hover:rotate-45 transition-transform" />
-                <span className="text-xs font-semibold hidden md:inline text-zinc-300">Light</span>
-              </>
+              <Sun className="w-4 h-4 text-white hover:rotate-45 transition-transform" />
             ) : (
-              <>
-                <Moon className="w-4 h-4 text-zinc-800 hover:-rotate-12 transition-transform" />
-                <span className="text-xs font-semibold hidden md:inline text-zinc-700">Dark</span>
-              </>
+              <Moon className="w-4 h-4 text-black hover:-rotate-12 transition-transform" />
             )}
           </button>
 
-          {/* User Profile Dropdown ONLY shown when logged in */}
-          {user ? (
+          {/* User Profile Dropdown */}
+          {user && (
             <div className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center space-x-2 pl-2 pr-2.5 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 active:scale-[0.98] transition-all cursor-pointer"
+                className="flex items-center gap-2 pl-2 pr-2.5 py-1.5 rounded-sm border border-[var(--line)] bg-[var(--surface-subtle)] hover:border-[var(--fg-muted)] transition-all cursor-pointer font-mono"
               >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-red-600 to-rose-600 text-white font-semibold text-xs flex items-center justify-center shadow-xs font-mono">
+                <div className="w-6 h-6 rounded-xs bg-[var(--accent)] text-white font-bold text-xs flex items-center justify-center">
                   {initial}
                 </div>
-                <span className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 hidden sm:inline">
+                <span className="text-xs text-[var(--fg)] hidden sm:inline font-medium">
                   {displayName}
                 </span>
-                <ChevronDown className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
+                <ChevronDown className="w-3 h-3 text-[var(--fg-muted)]" />
               </button>
 
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-[#121217] rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 py-2 z-50 animate-in fade-in zoom-in-95 duration-150 backdrop-blur-xl">
-                  <div className="px-4 py-2.5 border-b border-zinc-100 dark:border-zinc-800">
-                    <p className="text-xs font-bold text-zinc-900 dark:text-white tracking-tight">{user.name}</p>
-                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono truncate">{user.email}</p>
-                    <span className={`inline-block mt-1.5 text-[9px] font-mono uppercase tracking-widest font-bold px-2 py-0.5 rounded-full ${
-                      isAdmin
-                        ? 'bg-red-50 text-red-600 border border-red-200 dark:bg-red-950/80 dark:text-red-300 dark:border-red-800/80'
-                        : 'bg-zinc-100 text-zinc-700 border border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700'
-                    }`}>
-                      {isAdmin ? 'Administrator' : 'Member'}
+                <div className="absolute right-0 mt-2 w-56 bg-[var(--surface)] rounded-sm shadow-2xl border border-[var(--line)] py-2 z-50 backdrop-blur-xl animate-in fade-in duration-100 font-mono text-xs">
+                  <div className="px-3.5 py-2 border-b border-[var(--line)]">
+                    <p className="font-bold text-[var(--fg)] truncate">{user.name}</p>
+                    <p className="text-[10px] text-[var(--fg-muted)] truncate">{user.email}</p>
+                    <span className="inline-block mt-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-xs border border-[var(--line)] text-[var(--fg-muted)]">
+                      ROLE // {isAdmin ? 'ADMINISTRATOR' : 'MEMBER'}
                     </span>
                   </div>
 
-                  <div className="py-1">
-                    <Link
-                      to="/analytics"
-                      onClick={() => setDropdownOpen(false)}
-                      className="px-4 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800/80 hover:text-zinc-900 dark:hover:text-white flex items-center gap-2 transition-colors"
-                    >
-                      <BarChart3 className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
-                      <span>My Analytics</span>
-                    </Link>
-
-                    {isAdmin && (
-                      <Link
-                        to="/admin"
-                        onClick={() => setDropdownOpen(false)}
-                        className="px-4 py-2 text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center gap-2 transition-colors"
-                      >
-                        <ShieldAlert className="w-4 h-4" />
-                        <span>Admin Panel</span>
-                      </Link>
-                    )}
-                  </div>
-
-                  <div className="border-t border-zinc-100 dark:border-zinc-800 pt-1">
+                  <div className="pt-1">
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-2 cursor-pointer transition-colors"
+                      className="w-full text-left px-3.5 py-2 text-[var(--accent)] hover:bg-[var(--surface-hover)] flex items-center gap-2 cursor-pointer transition-colors"
                     >
                       <LogOut className="w-3.5 h-3.5" />
-                      <span>Sign Out</span>
+                      <span>SIGN OUT</span>
                     </button>
                   </div>
                 </div>
               )}
-            </div>
-          ) : (
-            /* Guest visitor: Show Login & Sign Up */
-            <div className="flex items-center space-x-2">
-              <Link
-                to="/login"
-                className="px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors"
-              >
-                Login
-              </Link>
-              <Link
-                to="/signup"
-                className="px-4 py-1.5 text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 active:scale-[0.98] rounded-xl shadow-md shadow-red-600/30 transition-all"
-              >
-                Sign Up
-              </Link>
             </div>
           )}
         </div>

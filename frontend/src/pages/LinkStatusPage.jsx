@@ -10,31 +10,39 @@ export default function LinkStatusPage() {
   const statusConfig = {
     blocked: {
       icon: ShieldAlert,
-      iconColor: 'text-rose-500 bg-rose-50 dark:bg-rose-950/60',
-      title: 'Malicious / Suspicious Link Blocked',
-      desc: `The shortened link "/${code}" targets a destination flagged as hazardous, phishing, or blocked by LinkPulse security administrators.`,
-      alert: 'Redirection has been terminated to safeguard your device and data.'
+      tag: 'SECURITY // HAZARD BLOCKED',
+      borderColor: 'border-[#D71921]',
+      textColor: 'text-[#D71921]',
+      title: 'Malicious Target Intercepted',
+      desc: `Short link "/${code}" points toward a destination flagged for malicious activity, phishing, or administrative revocation.`,
+      alert: 'Redirection has been terminated by the LinkPulse cryptographic security engine.'
     },
     paused: {
       icon: PauseCircle,
-      iconColor: 'text-amber-500 bg-amber-50 dark:bg-amber-950/60',
-      title: 'Link Temporarily Paused',
-      desc: `The owner of "/${code}" has paused this campaign. It is not currently accepting visitors.`,
-      alert: 'Please check back later or contact the link creator.'
+      tag: 'ROUTING // PAUSED',
+      borderColor: 'border-amber-500/50',
+      textColor: 'text-amber-500',
+      title: 'Link Transmission Suspended',
+      desc: `The administrator or owner of "/${code}" has paused active traffic distribution.`,
+      alert: 'Transmission is offline. Reconnect or contact link owner.'
     },
     expired: {
       icon: Clock,
-      iconColor: 'text-slate-500 bg-slate-100 dark:bg-slate-800',
-      title: 'Link Has Expired',
-      desc: `The link "/${code}" had a predetermined lifetime that has elapsed.`,
-      alert: 'This link is no longer active.'
+      tag: 'LIFECYCLE // EXPIRED',
+      borderColor: 'border-[var(--line)]',
+      textColor: 'text-zinc-400',
+      title: 'Link Lifetime Elapsed',
+      desc: `The pre-allocated TTL for "/${code}" has expired.`,
+      alert: 'This link has ceased routing.'
     },
     'not-found': {
       icon: FileQuestion,
-      iconColor: 'text-indigo-500 bg-indigo-50 dark:bg-indigo-950/60',
-      title: 'Short Link Not Found',
-      desc: `We could not find any active short link with the code "${code}".`,
-      alert: 'Check the URL spelling or generate a new link.'
+      tag: 'ERROR // 404 NOT FOUND',
+      borderColor: 'border-[var(--line)]',
+      textColor: 'text-[#D71921]',
+      title: 'Route Not Found',
+      desc: `No active destination record matches the requested slug "${code}".`,
+      alert: 'Verify slug spelling or synthesize a new short link.'
     }
   };
 
@@ -42,32 +50,37 @@ export default function LinkStatusPage() {
   const Icon = current.icon;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100">
-      <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-slate-200 dark:border-slate-700/80 text-center space-y-6">
-        <div className={`w-16 h-16 rounded-2xl mx-auto flex items-center justify-center ${current.iconColor}`}>
-          <Icon className="w-8 h-8" />
+    <div className="min-h-screen flex items-center justify-center p-6 bg-white dark:bg-black dot-matrix-bg text-black dark:text-white font-mono">
+      <div className={`corner-crosshairs-all relative max-w-md w-full bg-white dark:bg-[#0A0A0A] p-8 border ${current.borderColor} shadow-2xl text-center space-y-6`}>
+        <div className="flex items-center justify-center gap-2 text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#D71921] animate-pulse"></span>
+          <span>{current.tag}</span>
+        </div>
+
+        <div className={`w-14 h-14 border border-[var(--line)] ${current.textColor} mx-auto flex items-center justify-center`}>
+          <Icon className="w-7 h-7" />
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-extrabold tracking-tight font-sans text-black dark:text-white">
             {current.title}
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+          <p className="text-xs text-zinc-500 leading-relaxed font-mono">
             {current.desc}
           </p>
         </div>
 
-        <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300">
+        <div className="p-3.5 border border-[var(--line)] bg-zinc-50 dark:bg-black text-xs text-zinc-700 dark:text-zinc-300 font-mono">
           {current.alert}
         </div>
 
         <div className="pt-2">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-white bg-[#5850ec] hover:bg-indigo-600 transition-all text-xs shadow-md shadow-indigo-500/20"
+            className="btn-solid inline-flex items-center gap-2 px-6 py-2.5 text-xs font-mono uppercase tracking-widest"
           >
-            <Home className="w-4 h-4" />
-            <span>Go to LinkPulse Home</span>
+            <Home className="w-3.5 h-3.5" />
+            <span>RETURN TO LINKPULSE</span>
           </Link>
         </div>
       </div>

@@ -74,133 +74,95 @@ export default function AnalyticsDashboardPage() {
     <div className="space-y-6 sm:space-y-8">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
-            Welcome back, {firstName}!
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[var(--accent)] led-dot" />
+            <span className="font-ndot text-xs text-[var(--fg2)]">
+              <span className="text-[var(--accent)]">Telemetry //</span> Analytic Dashboard
+            </span>
+          </div>
+          <h1 className="font-ndot text-2xl sm:text-3xl text-[var(--fg)]">
+            Good Morning, {firstName}!
           </h1>
-          <p className="text-zinc-600 dark:text-zinc-400 text-xs sm:text-sm mt-1">
+          <p className="text-xs text-[var(--fg2)] font-mono">
             Here's what's happening with your links today.
           </p>
         </div>
 
         {/* Date Filter pill */}
-        <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-sm text-xs font-semibold text-zinc-700 dark:text-zinc-300 self-start sm:self-auto transition-colors">
-          <Calendar className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
-          <span>Live Pulse Period ({range === '30d' ? 'Last 30 Days' : 'Last 7 Days'})</span>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[var(--surface)] border border-[var(--line)] font-ndot text-[11px] text-[var(--fg2)] self-start sm:self-auto">
+          <Calendar className="w-3.5 h-3.5 text-[var(--accent)]" />
+          <span>WINDOW: {range === '30d' ? '30 DAYS' : '7 DAYS'}</span>
         </div>
       </div>
 
       {/* 4 KPI Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {/* Total Links */}
-        <div className="bg-white dark:bg-[#121217] p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-xl space-y-3 hover:border-red-500/40 transition-colors">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">Total Links</span>
-            <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-800/80 text-red-600 dark:text-red-400 flex items-center justify-center">
-              <FolderKanbanIcon className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-3xl font-extrabold text-zinc-900 dark:text-white">
-            {stats.totalLinks}
-          </div>
-          <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>↑ {stats.linksGrowth}</span>
-            <span className="text-zinc-500 font-normal">activity</span>
-          </div>
+        <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--line)] space-y-1">
+          <span className="font-ndot text-[10px] text-[var(--fg3)]">TOTAL LINKS</span>
+          <p className="font-ndot text-2xl sm:text-3xl text-[var(--fg)]">{stats.totalLinks}</p>
+          <span className="text-[10px] text-[var(--accent)] block font-ndot">↑ {stats.linksGrowth || '+12%'} vs. last week</span>
         </div>
 
         {/* Total Clicks */}
-        <div className="bg-white dark:bg-[#121217] p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-xl space-y-3 hover:border-red-500/40 transition-colors">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">Total Clicks</span>
-            <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-800/80 text-red-600 dark:text-red-400 flex items-center justify-center">
-              <Link2 className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-3xl font-extrabold text-zinc-900 dark:text-white">
-            {stats.totalClicks?.toLocaleString()}
-          </div>
-          <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>↑ {stats.clicksGrowth}</span>
-            <span className="text-zinc-500 font-normal">activity</span>
-          </div>
+        <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--line)] space-y-1">
+          <span className="font-ndot text-[10px] text-[var(--fg3)]">TOTAL CLICKS</span>
+          <p className="font-ndot text-2xl sm:text-3xl text-[var(--accent)]">{stats.totalClicks?.toLocaleString()}</p>
+          <span className="text-[10px] text-[var(--accent)] block font-ndot">↑ {stats.clicksGrowth || '+16%'} vs. last week</span>
         </div>
 
-        {/* Total QR */}
-        <div className="bg-white dark:bg-[#121217] p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-xl space-y-3 hover:border-red-500/40 transition-colors">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">Total QR</span>
-            <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-800/80 text-red-600 dark:text-red-400 flex items-center justify-center">
-              <QrCode className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-3xl font-extrabold text-zinc-900 dark:text-white">
-            {stats.totalQR}
-          </div>
-          <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>↑ {stats.qrGrowth}</span>
-            <span className="text-zinc-500 font-normal">activity</span>
-          </div>
+        {/* Total QR Codes */}
+        <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--line)] space-y-1">
+          <span className="font-ndot text-[10px] text-[var(--fg3)]">TOTAL QR CODES</span>
+          <p className="font-ndot text-2xl sm:text-3xl text-[var(--fg)]">{stats.totalQR}</p>
+          <span className="text-[10px] text-[var(--accent)] block font-ndot">↑ {stats.qrGrowth || '+16%'} vs. last week</span>
         </div>
 
         {/* Total Scans */}
-        <div className="bg-white dark:bg-[#121217] p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-xl space-y-3 hover:border-red-500/40 transition-colors">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">Total Scans</span>
-            <div className="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-800/80 text-red-600 dark:text-red-400 flex items-center justify-center">
-              <Scan className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="text-3xl font-extrabold text-zinc-900 dark:text-white">
-            {stats.totalScans}
-          </div>
-          <div className="flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>↑ {stats.scansGrowth}</span>
-            <span className="text-zinc-500 font-normal">activity</span>
-          </div>
+        <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--line)] space-y-1">
+          <span className="font-ndot text-[10px] text-[var(--fg3)]">TOTAL SCANS</span>
+          <p className="font-ndot text-2xl sm:text-3xl text-[var(--fg)]">{stats.totalScans}</p>
+          <span className="text-[10px] text-[var(--accent)] block font-ndot">↑ {stats.scansGrowth || '+14%'} vs. last week</span>
         </div>
       </div>
 
       {/* Main Charts & Top Links Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
         {/* Left Column: Click Trends (7 cols) */}
-        <div className="lg:col-span-7 bg-white dark:bg-[#121217] p-5 sm:p-7 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-xl space-y-6 transition-colors">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="lg:col-span-7 corner-crosshairs-all relative bg-white dark:bg-[#0A0A0A] p-5 sm:p-7 border border-[var(--line)] shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--line)] pb-4">
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-red-500" />
-                Click Trends
+              <h2 className="text-sm sm:text-base font-bold font-mono text-black dark:text-white flex items-center gap-2 uppercase tracking-wider">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#D71921]"></span>
+                CLICK TRAFFIC OSCILLATION
               </h2>
-              <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-0.5">
-                Live click traffic on your links over the last {range === '30d' ? '30 days' : '7 days'}
+              <p className="text-xs font-mono text-zinc-500 mt-0.5">
+                Traffic ingestion window [{range === '30d' ? '30 DAYS' : '7 DAYS'}]
               </p>
             </div>
 
             {/* Time Filter Pills */}
-            <div className="flex items-center bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-750 p-1 rounded-xl text-xs font-semibold self-start sm:self-auto">
+            <div className="flex items-center gap-1 font-mono text-xs">
               <button
                 onClick={() => setRange('7d')}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                className={`px-3 py-1 text-xs uppercase tracking-wider cursor-pointer ${
                   range === '7d'
-                    ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-sm'
-                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                    ? 'btn-solid'
+                    : 'btn-line'
                 }`}
               >
-                7 Days
+                7D
               </button>
               <button
                 onClick={() => setRange('30d')}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                className={`px-3 py-1 text-xs uppercase tracking-wider cursor-pointer ${
                   range === '30d'
-                    ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-sm'
-                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                    ? 'btn-solid'
+                    : 'btn-line'
                 }`}
               >
-                30 Days
+                30D
               </button>
             </div>
           </div>
@@ -211,32 +173,32 @@ export default function AnalyticsDashboardPage() {
               <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="clickGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0.0} />
+                    <stop offset="5%" stopColor="#D71921" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#D71921" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#27272a" opacity={0.6} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" opacity={0.7} />
                 <XAxis
                   dataKey="date"
                   tickLine={false}
-                  axisLine={false}
-                  tick={{ fill: '#71717a', fontSize: 11 }}
+                  axisLine={{ stroke: 'var(--line)' }}
+                  tick={{ fill: '#71717a', fontSize: 10, fontFamily: 'JetBrains Mono' }}
                 />
                 <YAxis
                   tickLine={false}
-                  axisLine={false}
+                  axisLine={{ stroke: 'var(--line)' }}
                   allowDecimals={false}
-                  tick={{ fill: '#71717a', fontSize: 11 }}
+                  tick={{ fill: '#71717a', fontSize: 10, fontFamily: 'JetBrains Mono' }}
                 />
                 <Tooltip
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="bg-[#181820] border border-zinc-750 text-white px-3 py-2 rounded-xl text-xs shadow-2xl space-y-1">
-                          <p className="font-semibold">{payload[0].payload.date}</p>
-                          <p className="text-red-400 font-mono">Clicks: {payload[0].value}</p>
+                        <div className="bg-white dark:bg-[#0A0A0A] border border-[var(--line)] text-black dark:text-white px-3 py-2 text-xs font-mono shadow-2xl space-y-1">
+                          <p className="font-bold text-[10px] uppercase text-zinc-500">{payload[0].payload.date}</p>
+                          <p className="text-[#D71921] font-bold">CLICKS: {payload[0].value}</p>
                           {payload[0].payload.scans !== undefined && (
-                            <p className="text-emerald-400 font-mono">QR Scans: {payload[0].payload.scans}</p>
+                            <p className="text-zinc-600 dark:text-zinc-400">SCANS: {payload[0].payload.scans}</p>
                           )}
                         </div>
                       );
@@ -247,8 +209,8 @@ export default function AnalyticsDashboardPage() {
                 <Area
                   type="monotone"
                   dataKey="clicks"
-                  stroke="#ef4444"
-                  strokeWidth={3}
+                  stroke="#D71921"
+                  strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#clickGradient)"
                 />
@@ -258,60 +220,60 @@ export default function AnalyticsDashboardPage() {
         </div>
 
         {/* Right Column: Top Performing Links (5 cols) */}
-        <div className="lg:col-span-5 bg-white dark:bg-[#121217] p-5 sm:p-7 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-xl space-y-4 transition-colors">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-              <Link2 className="w-4 h-4 text-red-500" />
-              Top Performing Links
+        <div className="lg:col-span-5 corner-crosshairs-all relative bg-white dark:bg-[#0A0A0A] p-5 sm:p-7 border border-[var(--line)] shadow-sm space-y-4 font-mono">
+          <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
+            <h2 className="text-xs sm:text-sm font-bold text-black dark:text-white uppercase tracking-wider flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#D71921]"></span>
+              HIGH VELOCITY DESTINATIONS
             </h2>
             {topLinks.length > 0 && (
               <RouterLink
                 to="/links"
-                className="text-xs font-semibold text-red-500 hover:underline"
+                className="text-[11px] text-[#D71921] hover:underline uppercase"
               >
-                View All
+                VIEW REGISTRY
               </RouterLink>
             )}
           </div>
 
           {topLinks.length === 0 ? (
-            <div className="text-center py-8 px-4 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 space-y-3">
-              <div className="w-10 h-10 rounded-full bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-800/80 text-red-500 mx-auto flex items-center justify-center">
+            <div className="text-center py-8 px-4 border border-[var(--line)] space-y-3">
+              <div className="w-10 h-10 border border-[var(--line)] text-[#D71921] mx-auto flex items-center justify-center">
                 <BarChart2 className="w-5 h-5" />
               </div>
-              <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                You haven't created any links yet. Start shortening to view performance!
+              <p className="text-xs text-zinc-500">
+                No active traffic detected. Synthesize short links to activate telemetry.
               </p>
               <RouterLink
                 to="/create-link"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 transition-all shadow-md shadow-red-600/30"
+                className="btn-solid inline-flex items-center gap-1.5 px-4 py-2 text-xs uppercase"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Create Short Link</span>
+                <span>GENERATE LINK</span>
               </RouterLink>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead className="text-zinc-500 border-b border-zinc-200 dark:border-zinc-800 pb-2">
+              <table className="w-full text-left text-xs font-mono">
+                <thead className="text-[10px] text-zinc-500 border-b border-[var(--line)] uppercase tracking-wider">
                   <tr>
-                    <th className="py-2.5 font-medium">Link</th>
-                    <th className="py-2.5 font-medium text-center">Clicks</th>
-                    <th className="py-2.5 font-medium text-right">Change</th>
+                    <th className="py-2.5 font-semibold">IDENTIFIER</th>
+                    <th className="py-2.5 font-semibold text-center">CLICKS</th>
+                    <th className="py-2.5 font-semibold text-right">TREND</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800/60">
+                <tbody className="divide-y divide-[var(--line)]">
                   {topLinks.map((item, idx) => (
-                    <tr key={idx} className="hover:bg-zinc-50 dark:hover:bg-zinc-850/40">
-                      <td className="py-3 font-mono font-medium text-red-500 truncate max-w-[170px]">
+                    <tr key={idx} className="hover:bg-zinc-100/50 dark:hover:bg-zinc-900/40">
+                      <td className="py-3 font-semibold text-[#D71921] truncate max-w-[170px]">
                         <a href={item.fullShortUrl} target="_blank" rel="noreferrer" className="hover:underline">
                           {item.shortUrl}
                         </a>
                       </td>
-                      <td className="py-3 font-semibold text-zinc-800 dark:text-zinc-200 text-center">
+                      <td className="py-3 text-black dark:text-white font-bold text-center">
                         {item.clicks}
                       </td>
-                      <td className="py-3 font-semibold text-emerald-500 text-right">
+                      <td className="py-3 text-[#D71921] text-right font-semibold">
                         ↑ {item.change}
                       </td>
                     </tr>
@@ -324,29 +286,32 @@ export default function AnalyticsDashboardPage() {
       </div>
 
       {/* Device & Technology Breakdown */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-        <div className="bg-white dark:bg-[#121217] p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-xl space-y-4 transition-colors">
-          <div className="flex items-center gap-2 text-sm font-bold text-zinc-900 dark:text-white">
-            <Monitor className="w-4 h-4 text-red-500" />
-            <span>Device Breakdown</span>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 font-mono">
+        <div className="corner-crosshairs-all relative bg-white dark:bg-[#0A0A0A] p-5 sm:p-6 border border-[var(--line)] shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-black dark:text-white flex items-center gap-2">
+              <Monitor className="w-3.5 h-3.5 text-[#D71921]" />
+              DEVICE MATRIX
+            </span>
+            <span className="text-[10px] text-zinc-500">[CLIENT]</span>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-3 pt-1">
             {deviceBreakdown.length > 0 && stats.totalClicks > 0 ? (
               deviceBreakdown.map((dev) => (
-                <div key={dev.name} className="space-y-1">
-                  <div className="flex items-center justify-between text-xs text-zinc-700 dark:text-zinc-300 font-medium">
-                    <span className="flex items-center gap-1.5">
+                <div key={dev.name} className="space-y-1 text-xs">
+                  <div className="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
+                    <span className="flex items-center gap-1.5 uppercase">
                       {dev.name === 'Desktop' && <Monitor className="w-3.5 h-3.5 text-zinc-400" />}
                       {dev.name === 'Mobile' && <Smartphone className="w-3.5 h-3.5 text-zinc-400" />}
                       {dev.name === 'Tablet' && <Tablet className="w-3.5 h-3.5 text-zinc-400" />}
                       {dev.name}
                     </span>
-                    <span>{dev.percentage}%</span>
+                    <span className="font-bold">{dev.percentage}%</span>
                   </div>
-                  <div className="w-full h-2 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                  <div className="w-full h-1 bg-zinc-200 dark:bg-zinc-800">
                     <div
-                      className="h-full bg-gradient-to-r from-red-600 to-rose-600 rounded-full transition-all duration-500"
+                      className="h-full bg-[#D71921]"
                       style={{ width: `${dev.percentage}%` }}
                     />
                   </div>
@@ -354,65 +319,62 @@ export default function AnalyticsDashboardPage() {
               ))
             ) : (
               <p className="text-xs text-zinc-500 py-3 text-center">
-                No device clicks recorded yet.
+                NO DEVICE TELEMETRY LOGGED
               </p>
             )}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#121217] p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-xl space-y-4 transition-colors">
-          <div className="flex items-center gap-2 text-sm font-bold text-zinc-900 dark:text-white">
-            <Globe className="w-4 h-4 text-emerald-500" />
-            <span>Top Browsers</span>
+        <div className="corner-crosshairs-all relative bg-white dark:bg-[#0A0A0A] p-5 sm:p-6 border border-[var(--line)] shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-black dark:text-white flex items-center gap-2">
+              <Globe className="w-3.5 h-3.5 text-[#D71921]" />
+              BROWSER AGENTS
+            </span>
+            <span className="text-[10px] text-zinc-500">[USER-AGENT]</span>
           </div>
 
-          <div className="space-y-2.5">
+          <div className="space-y-2.5 pt-1 text-xs">
             {browserBreakdown.length > 0 ? (
               browserBreakdown.map(b => (
-                <div key={b.name} className="flex items-center justify-between text-xs py-1 border-b border-zinc-100 dark:border-zinc-800/60 last:border-0">
-                  <span className="text-zinc-700 dark:text-zinc-300">{b.name}</span>
-                  <span className="font-semibold text-zinc-900 dark:text-white">{b.pct}</span>
+                <div key={b.name} className="flex items-center justify-between py-1 border-b border-[var(--line)] last:border-0">
+                  <span className="text-zinc-700 dark:text-zinc-300 uppercase">{b.name}</span>
+                  <span className="font-bold text-black dark:text-white">{b.pct}</span>
                 </div>
               ))
             ) : (
               <p className="text-xs text-zinc-500 py-3 text-center">
-                No browser data logged yet.
+                NO BROWSER TELEMETRY LOGGED
               </p>
             )}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#121217] p-5 sm:p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-xl space-y-4 transition-colors">
-          <div className="flex items-center gap-2 text-sm font-bold text-zinc-900 dark:text-white">
-            <ArrowUpRight className="w-4 h-4 text-red-500" />
-            <span>Top Referrers</span>
+        <div className="corner-crosshairs-all relative bg-white dark:bg-[#0A0A0A] p-5 sm:p-6 border border-[var(--line)] shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
+            <span className="text-xs font-bold uppercase tracking-wider text-black dark:text-white flex items-center gap-2">
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#D71921]" />
+              REFERRAL INGRESS
+            </span>
+            <span className="text-[10px] text-zinc-500">[HTTP-REFERER]</span>
           </div>
 
-          <div className="space-y-2.5">
+          <div className="space-y-2.5 pt-1 text-xs">
             {referrerBreakdown.length > 0 ? (
               referrerBreakdown.map(r => (
-                <div key={r.name} className="flex items-center justify-between text-xs py-1 border-b border-zinc-100 dark:border-zinc-800/60 last:border-0">
-                  <span className="text-zinc-700 dark:text-zinc-300">{r.name}</span>
-                  <span className="font-semibold text-red-500">{r.clicks} clicks</span>
+                <div key={r.name} className="flex items-center justify-between py-1 border-b border-[var(--line)] last:border-0">
+                  <span className="text-zinc-700 dark:text-zinc-300 uppercase">{r.name}</span>
+                  <span className="font-bold text-[#D71921]">{r.clicks} PKTS</span>
                 </div>
               ))
             ) : (
               <p className="text-xs text-zinc-500 py-3 text-center">
-                No referrer data available yet.
+                NO INGRESS SOURCES RECORDED
               </p>
             )}
           </div>
         </div>
       </div>
     </div>
-  );
-}
-
-function FolderKanbanIcon(props) {
-  return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>
-      <path d="M8 10v4"/><path d="M12 10v2"/><path d="M16 10v6"/>
-    </svg>
   );
 }

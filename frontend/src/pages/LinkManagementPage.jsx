@@ -261,150 +261,132 @@ export default function LinkManagementPage() {
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <h1 className="text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-800/80 text-red-600 dark:text-red-400 shadow-sm">
-              <FolderKanban className="w-6 h-6" />
-            </div>
-            Link Management
-          </h1>
-          <p className="text-zinc-600 dark:text-zinc-400 text-sm pl-13">
-            Search tags, view all links and QR codes, manage aliases, and track statuses.
-          </p>
+      <div className="panel p-6 sm:p-8 space-y-6">
+        <span aria-hidden="true" className="pointer-events-none select-none absolute -top-2 -left-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
+        <span aria-hidden="true" className="pointer-events-none select-none absolute -top-2 -right-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
+        <span aria-hidden="true" className="pointer-events-none select-none absolute -bottom-2 -left-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
+        <span aria-hidden="true" className="pointer-events-none select-none absolute -bottom-2 -right-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
+
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="font-ndot text-2xl text-[var(--fg)]">Link Management</h1>
+            <p className="text-xs text-[var(--fg2)] mt-1 font-mono">View, edit, and manage all your links in one place.</p>
+          </div>
+          <RouterLink
+            to="/create-link"
+            className="btn btn-solid btn-sm cursor-pointer"
+          >
+            <span>Create New Link</span>
+          </RouterLink>
         </div>
 
-        <RouterLink
-          to="/create-link"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 active:scale-[0.98] transition-all shadow-lg shadow-red-600/30 text-sm self-start sm:self-auto cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Create New Link</span>
-        </RouterLink>
-      </div>
-
-      {/* Filter Toolbar */}
-      <div className="bg-white dark:bg-[#121217] p-4 rounded-2xl shadow-sm dark:shadow-xl border border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-4 transition-colors">
-        {/* Search Input (Works for tag, title, URL, alias) */}
-        <div className="relative flex-1 min-w-[240px] max-w-md">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            placeholder="Search by tag (#marketing), title, or URL..."
-            className="w-full pl-9 pr-8 py-2 text-sm bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-750 rounded-xl text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 transition-all"
-          />
-          {search && (
-            <button
-              onClick={() => { setSearch(''); setPage(1); }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 cursor-pointer"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
-        </div>
-
-        {/* Dropdowns */}
+        {/* Filter Toolbar */}
         <div className="flex flex-wrap items-center gap-3">
+          {/* Search Input */}
+          <div className="relative flex-1 min-w-[220px]">
+            <Search className="w-4 h-4 text-[var(--fg3)] absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              placeholder="Search links, tags, or URLs..."
+              className="input input-with-icon"
+            />
+            {search && (
+              <button
+                onClick={() => { setSearch(''); setPage(1); }}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--fg3)] hover:text-[var(--fg)] cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
           {/* Status Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">Status:</span>
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-              className="px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-750 rounded-xl text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-red-500/30 cursor-pointer font-medium"
+              className="px-3 py-2 text-xs font-mono bg-[var(--surface)] border border-[var(--line)] rounded-xl text-[var(--fg)] focus:outline-none cursor-pointer"
             >
-              <option value="All Links" className="bg-white dark:bg-[#121217]">All Links</option>
-              <option value="Active" className="bg-white dark:bg-[#121217]">Active</option>
-              <option value="Paused" className="bg-white dark:bg-[#121217]">Paused</option>
-              <option value="Expired" className="bg-white dark:bg-[#121217]">Expired</option>
-              <option value="Blocked" className="bg-white dark:bg-[#121217]">Blocked</option>
+              <option value="All Links" className="bg-white dark:bg-black">All Links</option>
+              <option value="Active" className="bg-white dark:bg-black">Active</option>
+              <option value="Paused" className="bg-white dark:bg-black">Paused</option>
+              <option value="Expired" className="bg-white dark:bg-black">Expired</option>
+              <option value="Blocked" className="bg-white dark:bg-black">Blocked</option>
             </select>
           </div>
 
           {/* Tag Filter */}
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">Tags:</span>
             <select
               value={tagFilter}
               onChange={(e) => { setTagFilter(e.target.value); setPage(1); }}
-              className="px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-750 rounded-xl text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-red-500/30 cursor-pointer font-medium"
+              className="px-3 py-2 text-xs font-mono bg-[var(--surface)] border border-[var(--line)] rounded-xl text-[var(--fg)] focus:outline-none cursor-pointer"
             >
-              <option value="All Tags" className="bg-white dark:bg-[#121217]">All Tags ({availableTags.length})</option>
+              <option value="All Tags" className="bg-white dark:bg-black">All Tags</option>
               {availableTags.map(tag => (
-                <option key={tag} value={tag} className="bg-white dark:bg-[#121217]">#{tag}</option>
+                <option key={tag} value={tag} className="bg-white dark:bg-black">#{tag}</option>
               ))}
             </select>
-
-            {tagFilter !== 'All Tags' && (
-              <button
-                onClick={() => { setTagFilter('All Tags'); setPage(1); }}
-                title="Clear tag filter"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-100 dark:bg-red-950/80 text-red-600 dark:text-red-300 border border-red-200 dark:border-red-800 text-xs font-semibold hover:bg-red-200 dark:hover:bg-red-900/80 transition-colors cursor-pointer"
-              >
-                <span>#{tagFilter}</span>
-                <X className="w-3.5 h-3.5 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-200" />
-              </button>
-            )}
           </div>
 
           {/* Refresh */}
           <button
             onClick={fetchLinks}
             title="Refresh link list"
-            className="p-2 rounded-xl border border-zinc-200 dark:border-zinc-750 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+            className="btn btn-line btn-sm"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-red-500' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[var(--accent)]' : ''}`} />
           </button>
         </div>
       </div>
 
-      {/* Main Table: Showing Title (QR or Link), Destination URL, Short URL, Tags, Created At, Expired At, Status, Action */}
-      <div className="bg-white dark:bg-[#121217] rounded-2xl shadow-sm dark:shadow-xl border border-zinc-200 dark:border-zinc-800 overflow-visible transition-colors">
+      {/* Main Table Container */}
+      <div className="corner-crosshairs-all relative bg-white dark:bg-[#0A0A0A] border border-[var(--line)] shadow-sm overflow-visible">
         <div className="overflow-x-auto overflow-y-visible">
-          <table className="w-full text-left text-sm border-collapse">
-            <thead className="bg-zinc-50 dark:bg-zinc-900/90 text-xs font-semibold text-zinc-600 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-800 uppercase tracking-wider">
+          <table className="w-full text-left text-xs font-mono border-collapse">
+            <thead className="bg-zinc-50 dark:bg-black text-[11px] font-semibold text-zinc-500 border-b border-[var(--line)] uppercase tracking-wider">
               <tr>
-                <th className="px-4 py-4 font-semibold">Title (QR or Link)</th>
-                <th className="px-4 py-4 font-semibold">Destination URL</th>
-                <th className="px-4 py-4 font-semibold">Short URL</th>
-                <th className="px-4 py-4 font-semibold">Tags</th>
-                <th className="px-4 py-4 font-semibold whitespace-nowrap">Created At</th>
-                <th className="px-4 py-4 font-semibold whitespace-nowrap">Expired At</th>
-                <th className="px-4 py-4 font-semibold">Status</th>
-                <th className="px-4 py-4 font-semibold text-right">Action</th>
+                <th className="px-4 py-3.5">TITLE / TYPE</th>
+                <th className="px-4 py-3.5">DESTINATION PAYLOAD</th>
+                <th className="px-4 py-3.5">SHORT URL</th>
+                <th className="px-4 py-3.5">TAGS</th>
+                <th className="px-4 py-3.5 whitespace-nowrap">CREATED</th>
+                <th className="px-4 py-3.5 whitespace-nowrap">EXPIRES</th>
+                <th className="px-4 py-3.5">STATUS</th>
+                <th className="px-4 py-3.5 text-right">ACTION</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-200/80 dark:divide-zinc-800/60">
+            <tbody className="divide-y divide-[var(--line)]">
               {loading ? (
                 <tr>
-                  <td colSpan="8" className="px-6 py-12 text-center text-zinc-500 dark:text-zinc-400">
+                  <td colSpan="8" className="px-6 py-12 text-center text-zinc-500">
                     <div className="flex items-center justify-center gap-2">
-                      <RefreshCw className="w-4 h-4 animate-spin text-red-500" />
-                      <span>Loading your links and QR data...</span>
+                      <RefreshCw className="w-4 h-4 animate-spin text-[#D71921]" />
+                      <span>FETCHING TELEMETRY RECORDS...</span>
                     </div>
                   </td>
                 </tr>
               ) : links.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="px-6 py-12 text-center">
-                    <div className="max-w-sm mx-auto space-y-3">
-                      <div className="w-12 h-12 rounded-2xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900/50 text-red-500 flex items-center justify-center mx-auto">
-                        <FolderKanban className="w-6 h-6" />
+                    <div className="max-w-sm mx-auto space-y-3 font-mono">
+                      <div className="w-10 h-10 border border-[var(--line)] text-zinc-400 flex items-center justify-center mx-auto">
+                        <FolderKanban className="w-5 h-5 text-[#D71921]" />
                       </div>
-                      <p className="text-zinc-800 dark:text-zinc-200 font-semibold text-base">No links found</p>
-                      <p className="text-zinc-500 dark:text-zinc-400 text-xs">
+                      <p className="text-black dark:text-white font-bold text-sm uppercase tracking-wider">NO RECORDS FOUND</p>
+                      <p className="text-zinc-500 text-xs">
                         {search || statusFilter !== 'All Links' || tagFilter !== 'All Tags'
-                          ? 'No links match your current search or filters. Try clearing them.'
-                          : 'You haven\'t created any links yet. Start by shortening your first URL.'}
+                          ? 'No telemetry matched your parameters. Clear filters to resume broad scan.'
+                          : 'Registry is vacant. Encode your first cryptographic short link.'}
                       </p>
                       <RouterLink
                         to="/create-link"
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-red-600 hover:bg-red-500 transition-colors shadow-md shadow-red-600/30"
+                        className="btn-solid inline-flex items-center gap-1.5 px-4 py-2 text-xs font-mono uppercase tracking-wider"
                       >
                         <Plus className="w-3.5 h-3.5" />
-                        <span>Create Short Link</span>
+                        <span>GENERATE LINK</span>
                       </RouterLink>
                     </div>
                   </td>
@@ -418,25 +400,25 @@ export default function LinkManagementPage() {
                   return (
                     <tr
                       key={link._id}
-                      className="hover:bg-zinc-50/80 dark:hover:bg-zinc-850/40 transition-colors group"
+                      className="hover:bg-zinc-100/50 dark:hover:bg-zinc-900/40 transition-colors"
                     >
                       {/* 1. Title (QR or Link) */}
                       <td className="px-4 py-3.5 max-w-[200px]">
                         <div className="flex items-center gap-2">
                           <span
                             title={link.title || '-'}
-                            className="font-semibold text-zinc-900 dark:text-white truncate block text-sm"
+                            className="font-bold text-black dark:text-white truncate block text-xs"
                           >
                             {link.title && link.title.trim() ? link.title : '-'}
                           </span>
                           <span
-                            className={`text-[10px] px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider shrink-0 ${
+                            className={`text-[9px] px-1.5 py-0.2 font-mono uppercase tracking-widest shrink-0 border ${
                               isQR
-                                ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800'
-                                : 'bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800'
+                                ? 'border-zinc-500 text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-900'
+                                : 'border-[#D71921] text-[#D71921] bg-red-500/10'
                             }`}
                           >
-                            {isQR ? 'QR' : 'Link'}
+                            {isQR ? 'QR' : 'LINK'}
                           </span>
                         </div>
                       </td>
@@ -450,7 +432,7 @@ export default function LinkManagementPage() {
                               target="_blank"
                               rel="noreferrer"
                               title={link.originalUrl}
-                              className="font-mono text-xs text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-400 hover:underline truncate block"
+                              className="font-mono text-xs text-zinc-600 dark:text-zinc-400 hover:text-[#D71921] truncate block"
                             >
                               {link.originalUrl}
                             </a>
@@ -459,31 +441,31 @@ export default function LinkManagementPage() {
                               target="_blank"
                               rel="noreferrer"
                               title="Open original destination"
-                              className="text-zinc-400 hover:text-red-600 dark:hover:text-red-400 shrink-0"
+                              className="text-zinc-400 hover:text-[#D71921] shrink-0"
                             >
-                              <ExternalLink className="w-3.5 h-3.5" />
+                              <ExternalLink className="w-3 h-3" />
                             </a>
                           </div>
                         ) : (
-                          <span className="text-zinc-400 dark:text-zinc-600 text-xs">-</span>
+                          <span className="text-zinc-400 text-xs">-</span>
                         )}
                       </td>
 
-                      {/* 3. Short URL (of both QR and Link) with Copy Icon */}
+                      {/* 3. Short URL */}
                       <td className="px-4 py-3.5 whitespace-nowrap">
                         {link.shortUrl ? (
                           <div className="flex items-center gap-2">
-                            <span className="font-mono text-red-600 dark:text-red-400 font-bold text-xs">
+                            <span className="font-mono text-[#D71921] font-bold text-xs">
                               {link.shortUrl}
                             </span>
                             <button
                               onClick={() => handleCopy(link.shortUrl, link._id)}
                               aria-label="Copy short link"
                               title="Copy short link"
-                              className="p-1 rounded text-zinc-400 hover:text-zinc-800 dark:hover:text-white transition-colors cursor-pointer"
+                              className="p-1 text-zinc-400 hover:text-black dark:hover:text-white transition-colors cursor-pointer"
                             >
                               {isCopied ? (
-                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                                <CheckCircle2 className="w-3.5 h-3.5 text-[#D71921]" />
                               ) : (
                                 <Copy className="w-3.5 h-3.5" />
                               )}
@@ -493,13 +475,13 @@ export default function LinkManagementPage() {
                               target="_blank"
                               rel="noreferrer"
                               title="Open short link"
-                              className="p-1 rounded text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                              className="p-1 text-zinc-400 hover:text-[#D71921] transition-colors"
                             >
                               <ExternalLink className="w-3.5 h-3.5" />
                             </a>
                           </div>
                         ) : (
-                          <span className="text-zinc-400 dark:text-zinc-600 text-xs">-</span>
+                          <span className="text-zinc-400 text-xs">-</span>
                         )}
                       </td>
 
@@ -511,87 +493,88 @@ export default function LinkManagementPage() {
                               <button
                                 key={idx}
                                 onClick={() => { setTagFilter(t); setPage(1); }}
-                                title={`Click to filter by tag "#${t}"`}
-                                className="text-[11px] px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 hover:bg-red-50 dark:hover:bg-red-950/60 text-zinc-700 dark:text-zinc-300 hover:text-red-600 dark:hover:text-red-300 border border-zinc-200 dark:border-zinc-750/80 font-medium transition-colors cursor-pointer"
+                                title={`Filter by #${t}`}
+                                className="text-[10px] px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-[var(--line)] hover:border-[#D71921] transition-colors cursor-pointer"
                               >
                                 #{t}
                               </button>
                             ))
                           ) : (
-                            <span className="text-zinc-400 dark:text-zinc-600 text-xs font-mono">-</span>
+                            <span className="text-zinc-400 text-xs">-</span>
                           )}
                         </div>
                       </td>
 
                       {/* 5. Created At */}
-                      <td className="px-4 py-3.5 text-zinc-600 dark:text-zinc-400 whitespace-nowrap text-xs font-medium font-mono">
+                      <td className="px-4 py-3.5 text-zinc-600 dark:text-zinc-400 whitespace-nowrap text-xs">
                         {formatDate(link.createdAt)}
                       </td>
 
-                      {/* 6. Expired At (shows custom date or 1-year default expiry) */}
-                      <td className="px-4 py-3.5 text-zinc-600 dark:text-zinc-400 whitespace-nowrap text-xs font-medium font-mono">
+                      {/* 6. Expired At (without brackets) */}
+                      <td className="px-4 py-3.5 text-zinc-600 dark:text-zinc-400 whitespace-nowrap text-xs">
                         {getExpiryDate(link)}
                       </td>
 
                       {/* 7. Status */}
                       <td className="px-4 py-3.5 whitespace-nowrap">
                         <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                          className={`inline-flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider border ${
                             link.status === 'Active'
-                              ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60'
+                              ? 'border-zinc-400 dark:border-zinc-700 text-black dark:text-white bg-zinc-100 dark:bg-zinc-900'
                               : link.status === 'Paused'
-                              ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/60'
+                              ? 'border-amber-500/40 text-amber-500 bg-amber-500/10'
                               : link.status === 'Expired'
-                              ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700'
-                              : 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/60'
+                              ? 'border-zinc-500 text-zinc-400 bg-transparent'
+                              : 'border-[#D71921] text-[#D71921] bg-red-500/10'
                           }`}
                         >
+                          <span className={`w-1.5 h-1.5 rounded-full ${link.status === 'Active' ? 'bg-[#D71921]' : link.status === 'Paused' ? 'bg-amber-500' : 'bg-zinc-500'}`}></span>
                           {link.status || '-'}
                         </span>
                       </td>
 
-                      {/* 8. Action: Click shows dropdown with delete, copy, change password, change alias */}
+                      {/* 8. Action */}
                       <td className="px-4 py-3.5 text-right whitespace-nowrap relative">
                         <div className="inline-block text-left" ref={isMenuOpen ? menuRef : null}>
                           <button
                             onClick={() => setActiveMenuId(isMenuOpen ? null : link._id)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-zinc-700 dark:text-zinc-200 hover:text-white bg-zinc-100 dark:bg-zinc-800 hover:bg-red-600 dark:hover:bg-red-600 border border-zinc-200 dark:border-zinc-750 rounded-xl transition-all cursor-pointer shadow-xs"
+                            className="btn-line inline-flex items-center gap-1 px-2.5 py-1 text-xs font-mono uppercase tracking-wider cursor-pointer"
                           >
-                            <span>Action</span>
-                            <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} />
+                            <span>ACTION</span>
+                            <ChevronDown className={`w-3 h-3 transition-transform ${isMenuOpen ? 'rotate-180' : ''}`} />
                           </button>
 
                           {/* Floating Action Menu */}
                           {isMenuOpen && (
-                            <div className="absolute right-4 top-full mt-1.5 w-52 bg-white dark:bg-[#181820] rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-750 py-1.5 z-40 animate-in fade-in zoom-in-95 duration-150">
+                            <div className="absolute right-4 top-full mt-1 w-48 bg-white dark:bg-[#0A0A0A] border border-[var(--line)] shadow-xl py-1 z-40 animate-in fade-in zoom-in-95 duration-150 font-mono text-xs">
                               {/* 1. Copy Short URL */}
                               <button
                                 onClick={() => {
                                   handleCopy(link.shortUrl, link._id);
                                   setActiveMenuId(null);
                                 }}
-                                className="w-full px-3.5 py-2 text-left text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-red-600 dark:hover:text-red-400 flex items-center gap-2.5 transition-colors cursor-pointer"
+                                className="w-full px-3 py-2 text-left text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-[#D71921] flex items-center gap-2 cursor-pointer transition-colors"
                               >
-                                <Copy className="w-4 h-4 text-zinc-400" />
-                                <span>Copy Short URL</span>
+                                <Copy className="w-3.5 h-3.5 text-zinc-400" />
+                                <span>COPY SHORT URL</span>
                               </button>
 
                               {/* 2. Change Password */}
                               <button
                                 onClick={() => openPasswordModal(link)}
-                                className="w-full px-3.5 py-2 text-left text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-red-600 dark:hover:text-red-400 flex items-center gap-2.5 transition-colors cursor-pointer"
+                                className="w-full px-3 py-2 text-left text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-[#D71921] flex items-center gap-2 cursor-pointer transition-colors"
                               >
-                                <KeyRound className="w-4 h-4 text-zinc-400" />
-                                <span>Change Password</span>
+                                <KeyRound className="w-3.5 h-3.5 text-zinc-400" />
+                                <span>SET PASSWORD</span>
                               </button>
 
                               {/* 3. Change Alias */}
                               <button
                                 onClick={() => openAliasModal(link)}
-                                className="w-full px-3.5 py-2 text-left text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-red-600 dark:hover:text-red-400 flex items-center gap-2.5 transition-colors cursor-pointer"
+                                className="w-full px-3 py-2 text-left text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-[#D71921] flex items-center gap-2 cursor-pointer transition-colors"
                               >
-                                <Link2 className="w-4 h-4 text-zinc-400" />
-                                <span>Change Alias</span>
+                                <Link2 className="w-3.5 h-3.5 text-zinc-400" />
+                                <span>CHANGE ALIAS</span>
                               </button>
 
                               {/* 4. View QR Code */}
@@ -600,39 +583,39 @@ export default function LinkManagementPage() {
                                   setQrModalLink(link);
                                   setActiveMenuId(null);
                                 }}
-                                className="w-full px-3.5 py-2 text-left text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-red-600 dark:hover:text-red-400 flex items-center gap-2.5 transition-colors cursor-pointer"
+                                className="w-full px-3 py-2 text-left text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-[#D71921] flex items-center gap-2 cursor-pointer transition-colors"
                               >
-                                <QrCode className="w-4 h-4 text-zinc-400" />
-                                <span>View QR Code</span>
+                                <QrCode className="w-3.5 h-3.5 text-zinc-400" />
+                                <span>VIEW QR CODE</span>
                               </button>
 
                               {/* 5. Toggle Status */}
                               <button
                                 onClick={() => handleToggleStatus(link._id)}
-                                className="w-full px-3.5 py-2 text-left text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-amber-500 dark:hover:text-amber-400 flex items-center gap-2.5 transition-colors cursor-pointer"
+                                className="w-full px-3 py-2 text-left text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-amber-500 flex items-center gap-2 cursor-pointer transition-colors"
                               >
                                 {link.status === 'Active' ? (
                                   <>
-                                    <PauseCircle className="w-4 h-4 text-amber-500" />
-                                    <span>Pause Link</span>
+                                    <PauseCircle className="w-3.5 h-3.5 text-amber-500" />
+                                    <span>PAUSE LINK</span>
                                   </>
                                 ) : (
                                   <>
-                                    <PlayCircle className="w-4 h-4 text-emerald-500" />
-                                    <span>Activate Link</span>
+                                    <PlayCircle className="w-3.5 h-3.5 text-[#D71921]" />
+                                    <span>ACTIVATE LINK</span>
                                   </>
                                 )}
                               </button>
 
-                              <div className="border-t border-zinc-100 dark:border-zinc-800 my-1" />
+                              <div className="border-t border-[var(--line)] my-1" />
 
                               {/* 6. Delete Option */}
                               <button
                                 onClick={() => handleDelete(link._id, link.shortCode)}
-                                className="w-full px-3.5 py-2 text-left text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center gap-2.5 transition-colors cursor-pointer"
+                                className="w-full px-3 py-2 text-left font-semibold text-[#D71921] hover:bg-red-500/10 flex items-center gap-2 cursor-pointer transition-colors"
                               >
-                                <Trash2 className="w-4 h-4 text-red-500" />
-                                <span>Delete Link</span>
+                                <Trash2 className="w-3.5 h-3.5 text-[#D71921]" />
+                                <span>DELETE LINK</span>
                               </button>
                             </div>
                           )}
@@ -647,9 +630,9 @@ export default function LinkManagementPage() {
         </div>
 
         {/* Pagination */}
-        <div className="px-6 py-4 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-600 dark:text-zinc-400 bg-zinc-50/50 dark:bg-zinc-900/30">
+        <div className="px-6 py-4 border-t border-[var(--line)] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-zinc-500 bg-zinc-50 dark:bg-black">
           <div>
-            Showing {links.length > 0 ? (page - 1) * 15 + 1 : 0} - {Math.min(page * 15, totalLinks)} of {totalLinks} total links
+            RECORDS [{links.length > 0 ? (page - 1) * 15 + 1 : 0} - {Math.min(page * 15, totalLinks)}] OF [{totalLinks}]
           </div>
 
           <div className="flex items-center gap-1.5">
@@ -657,19 +640,19 @@ export default function LinkManagementPage() {
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
               aria-label="Previous page"
-              className="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-750 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+              className="btn-line p-1.5 text-xs disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-3.5 h-3.5" />
             </button>
 
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <button
                 key={p}
                 onClick={() => setPage(p)}
-                className={`w-7 h-7 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`w-7 h-7 text-xs font-mono font-semibold transition-all cursor-pointer ${
                   page === p
-                    ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md shadow-red-600/30'
-                    : 'border border-zinc-200 dark:border-zinc-750 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300'
+                    ? 'btn-solid'
+                    : 'btn-line'
                 }`}
               >
                 {p}
@@ -680,9 +663,9 @@ export default function LinkManagementPage() {
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page === totalPages || totalPages === 0}
               aria-label="Next page"
-              className="p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-750 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+              className="btn-line p-1.5 text-xs disabled:opacity-30 disabled:pointer-events-none cursor-pointer"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -692,38 +675,38 @@ export default function LinkManagementPage() {
       {/* CHANGE PASSWORD MODAL                                     */}
       {/* ======================================================== */}
       {passwordModalLink && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-[#121217] rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-zinc-200 dark:border-zinc-800 space-y-5 transition-colors">
-            <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in">
+          <div className="corner-crosshairs-all relative bg-white dark:bg-[#0A0A0A] max-w-md w-full p-6 sm:p-7 border border-[var(--line)] shadow-2xl space-y-5 font-mono">
+            <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-red-50 dark:bg-red-950/80 text-red-600 dark:text-red-400">
-                  <KeyRound className="w-5 h-5" />
+                <div className="p-2 border border-[var(--line)] text-[#D71921]">
+                  <KeyRound className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-base text-zinc-900 dark:text-white">
-                    Change Password
+                  <h3 className="font-bold text-sm text-black dark:text-white uppercase tracking-wider">
+                    SECURITY ACCESS LOCK
                   </h3>
-                  <p className="text-xs text-red-600 dark:text-red-400 font-mono">
+                  <p className="text-xs text-[#D71921] font-mono">
                     /{passwordModalLink.shortCode}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setPasswordModalLink(null)}
-                className="text-zinc-400 hover:text-zinc-700 dark:hover:text-white p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                className="text-zinc-400 hover:text-black dark:hover:text-white p-1 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSavePassword} className="space-y-4 text-sm">
-              <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                Set a secret password to protect this short link. Visitors must enter this password before being redirected.
+            <form onSubmit={handleSavePassword} className="space-y-4 text-xs font-mono">
+              <p className="text-zinc-600 dark:text-zinc-400">
+                Impose authentication before target redirection occurs.
               </p>
 
               <div>
-                <label className="block font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5 text-xs">
-                  New Password
+                <label className="block font-semibold uppercase tracking-wider text-black dark:text-white mb-1.5 text-xs">
+                  New Passphrase
                 </label>
                 <input
                   type="password"
@@ -732,9 +715,9 @@ export default function LinkManagementPage() {
                     setNewPassword(e.target.value);
                     if (removePasswordProtection) setRemovePasswordProtection(false);
                   }}
-                  placeholder="Enter new password"
+                  placeholder="Passphrase"
                   disabled={removePasswordProtection}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-750 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 text-sm disabled:opacity-50"
+                  className="w-full px-3.5 py-2.5 bg-zinc-50 dark:bg-black border border-[var(--line)] text-black dark:text-white focus:outline-none focus:border-[#D71921] text-xs disabled:opacity-50"
                 />
               </div>
 
@@ -747,28 +730,28 @@ export default function LinkManagementPage() {
                       setRemovePasswordProtection(e.target.checked);
                       if (e.target.checked) setNewPassword('');
                     }}
-                    className="rounded bg-zinc-800 border-zinc-700 text-red-600 focus:ring-red-500"
+                    className="accent-[#D71921]"
                   />
-                  <span className="text-xs font-semibold text-red-600 dark:text-red-400">
-                    Remove password protection completely
+                  <span className="text-xs font-semibold text-[#D71921]">
+                    Purge access protection completely
                   </span>
                 </label>
               )}
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-zinc-200 dark:border-zinc-800">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--line)]">
                 <button
                   type="button"
                   onClick={() => setPasswordModalLink(null)}
-                  className="px-4 py-2 rounded-xl border border-zinc-200 dark:border-zinc-750 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 font-medium text-xs cursor-pointer"
+                  className="btn-line px-4 py-2 text-xs uppercase cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={savingPassword || (!newPassword && !removePasswordProtection)}
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold text-xs shadow-md shadow-red-600/30 cursor-pointer disabled:opacity-50"
+                  className="btn-solid px-5 py-2 text-xs uppercase cursor-pointer disabled:opacity-50"
                 >
-                  {savingPassword ? 'Updating...' : 'Save Password'}
+                  {savingPassword ? 'UPDATING...' : 'SAVE PASSPHRASE'}
                 </button>
               </div>
             </form>
@@ -780,34 +763,34 @@ export default function LinkManagementPage() {
       {/* CHANGE ALIAS MODAL                                        */}
       {/* ======================================================== */}
       {aliasModalLink && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-[#121217] rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-zinc-200 dark:border-zinc-800 space-y-5 transition-colors">
-            <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in">
+          <div className="corner-crosshairs-all relative bg-white dark:bg-[#0A0A0A] max-w-md w-full p-6 sm:p-7 border border-[var(--line)] shadow-2xl space-y-5 font-mono">
+            <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-red-50 dark:bg-red-950/80 text-red-600 dark:text-red-400">
-                  <Link2 className="w-5 h-5" />
+                <div className="p-2 border border-[var(--line)] text-[#D71921]">
+                  <Link2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-base text-zinc-900 dark:text-white">
-                    Change Custom Alias
+                  <h3 className="font-bold text-sm text-black dark:text-white uppercase tracking-wider">
+                    MUTATE SLUG ALIAS
                   </h3>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                    Update the short slug for this URL
+                  <p className="text-xs text-zinc-500">
+                    Re-route hash pointer to vanity identifier
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setAliasModalLink(null)}
-                className="text-zinc-400 hover:text-zinc-700 dark:hover:text-white p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                className="text-zinc-400 hover:text-black dark:hover:text-white p-1 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveAlias} className="space-y-4 text-sm">
+            <form onSubmit={handleSaveAlias} className="space-y-4 text-xs font-mono">
               <div>
-                <label className="block font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5 text-xs">
-                  New Custom Alias
+                <label className="block font-semibold uppercase tracking-wider text-black dark:text-white mb-1.5">
+                  Target Slug Identifier
                 </label>
                 <div className="relative">
                   <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 font-mono text-xs">/</span>
@@ -818,36 +801,36 @@ export default function LinkManagementPage() {
                       setNewAlias(e.target.value);
                       setAliasError('');
                     }}
-                    placeholder="my-custom-name"
+                    placeholder="custom-slug"
                     required
-                    className="w-full pl-7 pr-4 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-750 text-zinc-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 text-sm"
+                    className="w-full pl-7 pr-4 py-2.5 bg-zinc-50 dark:bg-black border border-[var(--line)] text-black dark:text-white font-mono focus:outline-none focus:border-[#D71921] text-xs"
                   />
                 </div>
-                <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 block">
-                  3-30 characters (letters, numbers, hyphens, underscores).
+                <span className="text-[10px] text-zinc-500 mt-1 block">
+                  3-30 chars: a-z, 0-9, hyphens, underscores.
                 </span>
               </div>
 
               {aliasError && (
-                <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-300 text-xs">
+                <div className="p-3 bg-red-500/10 border border-[#D71921]/40 text-[#D71921] text-xs">
                   {aliasError}
                 </div>
               )}
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-zinc-200 dark:border-zinc-800">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[var(--line)]">
                 <button
                   type="button"
                   onClick={() => setAliasModalLink(null)}
-                  className="px-4 py-2 rounded-xl border border-zinc-200 dark:border-zinc-750 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 font-medium text-xs cursor-pointer"
+                  className="btn-line px-4 py-2 text-xs uppercase cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={savingAlias || !newAlias.trim()}
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold text-xs shadow-md shadow-red-600/30 cursor-pointer disabled:opacity-50"
+                  className="btn-solid px-5 py-2 text-xs uppercase cursor-pointer disabled:opacity-50"
                 >
-                  {savingAlias ? 'Updating...' : 'Save Alias'}
+                  {savingAlias ? 'MUTATING...' : 'SAVE ALIAS'}
                 </button>
               </div>
             </form>
@@ -859,26 +842,26 @@ export default function LinkManagementPage() {
       {/* QR CODE PREVIEW MODAL                                     */}
       {/* ======================================================== */}
       {qrModalLink && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white dark:bg-[#121217] rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-zinc-200 dark:border-zinc-800 space-y-5 transition-colors text-center">
-            <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-in fade-in">
+          <div className="corner-crosshairs-all relative bg-white dark:bg-[#0A0A0A] max-w-sm w-full p-6 border border-[var(--line)] shadow-2xl space-y-5 text-center font-mono">
+            <div className="flex items-center justify-between border-b border-[var(--line)] pb-3">
               <div className="text-left">
-                <h3 className="font-extrabold text-base text-zinc-900 dark:text-white">
-                  QR Code
+                <h3 className="font-bold text-sm text-black dark:text-white uppercase tracking-wider">
+                  OPTICAL CODE
                 </h3>
-                <p className="text-xs text-red-600 dark:text-red-400 font-mono">
+                <p className="text-xs text-[#D71921] font-mono">
                   /{qrModalLink.shortCode}
                 </p>
               </div>
               <button
                 onClick={() => setQrModalLink(null)}
-                className="text-zinc-400 hover:text-zinc-700 dark:hover:text-white p-1 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                className="text-zinc-400 hover:text-black dark:hover:text-white p-1 cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="p-3 bg-white rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-700 mx-auto w-fit">
+            <div className="p-4 bg-white border border-[var(--line)] mx-auto w-fit">
               {qrModalLink.qrCodeDataUrl ? (
                 <img
                   src={qrModalLink.qrCodeDataUrl}
@@ -892,28 +875,28 @@ export default function LinkManagementPage() {
               )}
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 pt-2">
               <button
                 onClick={() => handleDownloadQR(qrModalLink)}
-                className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-red-600/25 transition-all cursor-pointer"
+                className="btn-solid flex-1 py-2 px-3 text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
-                <span>Download PNG</span>
+                <span>DOWNLOAD</span>
               </button>
 
               <button
                 onClick={() => handleCopy(qrModalLink.shortUrl, 'qr-modal')}
-                className="py-2 px-3 rounded-xl border border-zinc-200 dark:border-zinc-750 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                className="btn-line py-2 px-3 text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 {copiedId === 'qr-modal' ? (
                   <>
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                    <span>Copied!</span>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#D71921]" />
+                    <span>COPIED</span>
                   </>
                 ) : (
                   <>
                     <Copy className="w-3.5 h-3.5" />
-                    <span>Copy Link</span>
+                    <span>COPY</span>
                   </>
                 )}
               </button>

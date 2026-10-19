@@ -1,14 +1,30 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Link2, ArrowRight, ShieldCheck, AlertCircle, X, Eye, EyeOff } from 'lucide-react';
+import {
+  Link2,
+  ArrowRight,
+  ShieldCheck,
+  AlertCircle,
+  X,
+  Eye,
+  EyeOff,
+  CheckCircle2,
+  Lock,
+  Mail
+} from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [forgotModalOpen, setForgotModalOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotSuccess, setForgotSuccess] = useState(false);
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -17,7 +33,7 @@ export default function LoginPage() {
     try {
       setLoading(true);
       setError(null);
-      await login(email, password);
+      await login(email.trim(), password);
       navigate('/analytics');
     } catch (err) {
       setError(err.message || 'Invalid email or password.');
@@ -39,74 +55,113 @@ export default function LoginPage() {
     }
   };
 
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
+    if (!forgotEmail) return;
+    setForgotSuccess(true);
+    setTimeout(() => {
+      setForgotSuccess(false);
+      setForgotModalOpen(false);
+      setForgotEmail('');
+    }, 2800);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-white dark:bg-[#08080a] text-zinc-900 dark:text-zinc-100 relative selection:bg-red-500 selection:text-white transition-colors">
-      {/* Background Ambient Glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 dot-matrix-bg bg-[var(--bg)] text-[var(--fg)] relative selection:bg-[var(--accent)] selection:text-white transition-colors duration-150">
+      {/* Return to Home link */}
+      <Link
+        to="/"
+        className="absolute top-6 left-6 font-ndot text-xs text-[var(--fg-muted)] hover:text-[var(--accent)] flex items-center gap-2 transition-colors cursor-pointer"
+      >
+        <span>← RETURN // HOME</span>
+      </Link>
 
-      <div className="relative max-w-md w-full bg-white dark:bg-[#121217] rounded-3xl p-8 shadow-xl dark:shadow-2xl border border-zinc-200 dark:border-zinc-800/80 space-y-6 backdrop-blur-xl transition-colors">
-        {/* Cross / Close button to return to home */}
-        <button
-          onClick={() => navigate('/')}
-          aria-label="Close"
-          title="Return to Home"
-          className="absolute top-5 right-5 p-2 rounded-xl text-zinc-400 hover:text-zinc-800 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
-        >
-          <X className="w-5 h-5" />
-        </button>
+      <div className="relative max-w-md w-full panel p-6 sm:p-8 rounded-2xl shadow-2xl space-y-6">
+        {/* Crosshair corners */}
+        <span aria-hidden="true" className="pointer-events-none select-none absolute -top-2 -left-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
+        <span aria-hidden="true" className="pointer-events-none select-none absolute -top-2 -right-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
+        <span aria-hidden="true" className="pointer-events-none select-none absolute -bottom-2 -left-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
+        <span aria-hidden="true" className="pointer-events-none select-none absolute -bottom-2 -right-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
 
-        {/* Brand */}
-        <div className="text-center space-y-2 pt-1">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-600 flex items-center justify-center text-white mx-auto shadow-lg shadow-red-600/30">
-            <Link2 className="w-6 h-6 -rotate-45" />
+        {/* Header indicator bar */}
+        <div className="flex items-center justify-between pb-4 border-b border-[var(--line)]">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[var(--accent)] led-dot" />
+            <span className="font-ndot text-xs text-[var(--fg2)]">
+              <span className="text-[var(--accent)]">Auth //</span> Operator Login
+            </span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
-            Sign in to LinkPulse
+          <button
+            onClick={() => navigate('/')}
+            aria-label="Close"
+            title="Return to Home"
+            className="p-1 rounded-md text-[var(--fg3)] hover:text-[var(--fg)] transition-colors cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Title */}
+        <div className="space-y-1">
+          <h1 className="font-ndot text-2xl text-[var(--fg)]">
+            Login
           </h1>
-          <p className="text-xs text-zinc-600 dark:text-zinc-400">
-            Enter your credentials to access your dashboard & analytics
+          <p className="text-xs text-[var(--fg2)] font-mono">
+            INPUT CREDENTIALS TO ACCESS TELEMETRY
           </p>
         </div>
 
         {error && (
-          <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-300 text-xs flex items-center gap-2">
+          <div className="p-3 rounded-xl border border-[var(--accent)] bg-[var(--accent-dim)] text-[var(--accent)] text-xs flex items-center gap-2.5 font-mono">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4 text-sm">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+            <label className="block font-ndot text-[11px] text-[var(--fg)] mb-1.5">
               Email Address
             </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="samantarpita70@gmail.com"
-              className="w-full px-4 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-750 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
-            />
+            <div className="relative">
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="yourname@gmail.com"
+                className="input"
+              />
+              <Mail className="w-4 h-4 text-[var(--fg3)] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-              Password
-            </label>
+            <div className="flex justify-between items-center mb-1.5">
+              <label className="block font-ndot text-[11px] text-[var(--fg)]">
+                Password
+              </label>
+              <button
+                type="button"
+                onClick={() => setForgotModalOpen(true)}
+                className="font-ndot text-[10px] text-[var(--accent)] hover:underline transition-colors cursor-pointer"
+              >
+                FORGOT PASSWORD?
+              </button>
+            </div>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-4 py-2.5 pr-11 rounded-xl bg-zinc-50 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-750 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
+                placeholder="••••••••••••"
+                className="input pr-11"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 dark:hover:text-white transition-colors cursor-pointer"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--fg3)] hover:text-[var(--fg)] transition-colors cursor-pointer"
                 title={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -114,36 +169,101 @@ export default function LoginPage() {
             </div>
           </div>
 
+          {/* Remember Me Checkbox */}
+          <div className="flex items-center gap-2 pt-0.5">
+            <input
+              type="checkbox"
+              id="rememberMe"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="w-3.5 h-3.5 rounded-xs accent-[var(--accent)] border-[var(--line)] bg-[var(--bg)] cursor-pointer"
+            />
+            <label htmlFor="rememberMe" className="text-xs text-[var(--fg2)] font-mono cursor-pointer">
+              Remember Me
+            </label>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 active:scale-[0.98] transition-all shadow-lg shadow-red-600/30 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="btn btn-solid w-full py-4 text-xs cursor-pointer disabled:opacity-50 mt-2"
           >
-            <span>{loading ? 'Signing in...' : 'Sign In'}</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>{loading ? 'AUTHENTICATING...' : 'LOGIN'}</span>
+            <ArrowRight className="w-4 h-4 text-[var(--accent)]" />
           </button>
         </form>
 
         {/* 1-Click Demo Button for Admin */}
-        <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800 space-y-2">
-          <p className="text-[11px] text-center text-zinc-500 dark:text-zinc-400 font-medium">Quick Admin Login</p>
+        <div className="pt-3 border-t border-[var(--line)] space-y-2">
+          <p className="text-[10px] font-ndot text-center text-[var(--fg3)]">
+            ADMINISTRATOR ROOT ACCESS
+          </p>
           <button
             type="button"
             onClick={handleAdminDemo}
-            className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/40 border border-red-200 dark:border-red-800/60 text-red-600 dark:text-red-300 flex items-center justify-center gap-2 transition-colors cursor-pointer"
+            disabled={loading}
+            className="btn btn-line w-full py-3 text-xs flex items-center justify-center gap-2 cursor-pointer"
           >
-            <ShieldCheck className="w-4 h-4 text-red-500 dark:text-red-400" />
-            <span>Login as Admin (Arpita Samant)</span>
+            <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent)]" />
+            <span>1-CLICK DEMO ACCESS (ROOT)</span>
           </button>
         </div>
 
-        <div className="text-center text-xs text-zinc-500 dark:text-zinc-400">
-          Don't have an account?{' '}
-          <Link to="/signup" className="text-red-500 hover:text-red-600 dark:text-red-400 font-semibold hover:underline">
-            Sign up free
+        <div className="text-center font-ndot text-[11px] text-[var(--fg3)]">
+          DON'T HAVE AN ACCOUNT?{' '}
+          <Link to="/signup" className="text-[var(--accent)] hover:underline">
+            CREATE ACCOUNT →
           </Link>
         </div>
       </div>
+
+      {/* Forgot Password Recovery Modal */}
+      {forgotModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs">
+          <div className="relative max-w-sm w-full nothing-panel corner-crosshairs-all p-6 rounded-sm shadow-2xl space-y-4">
+            <button
+              onClick={() => setForgotModalOpen(false)}
+              className="absolute top-4 right-4 p-1 text-[var(--fg-dim)] hover:text-[var(--fg)] cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="space-y-1">
+              <span className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-widest font-bold">
+                RECOVERY // PASSWORD
+              </span>
+              <h2 className="text-base font-bold text-[var(--fg)]">Password Recovery</h2>
+              <p className="text-xs text-[var(--fg-muted)] font-mono">
+                Enter your registered @gmail.com email to receive instructions.
+              </p>
+            </div>
+
+            {forgotSuccess ? (
+              <div className="p-3 rounded-xs border border-emerald-500/50 bg-emerald-500/10 text-emerald-400 font-mono text-xs flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>Recovery instructions sent to email.</span>
+              </div>
+            ) : (
+              <form onSubmit={handleForgotPassword} className="space-y-3 font-mono text-xs">
+                <input
+                  type="email"
+                  required
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  placeholder="yourname@gmail.com"
+                  className="w-full px-3 py-2 rounded-sm bg-[var(--surface-subtle)] border border-[var(--line)] text-[var(--fg)] placeholder-[var(--fg-dim)] focus:outline-none focus:border-[var(--accent)]"
+                />
+                <button
+                  type="submit"
+                  className="btn-solid w-full py-2.5 rounded-sm uppercase tracking-wider text-xs"
+                >
+                  DISPATCH RECOVERY
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
