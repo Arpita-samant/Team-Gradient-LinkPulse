@@ -204,17 +204,19 @@ export default function LandingPage() {
 
       {/* Hero Section - Standard max-w-7xl page width */}
       <section className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 grid grid-cols-1 lg:grid-cols-12 items-center gap-8 lg:gap-10">
-        {/* Left Column Content - Prominent & Engaging */}
-        <div className="lg:col-span-5 space-y-6 text-center lg:text-left z-10 max-w-xl mx-auto lg:mx-0">
-          <h1 className="text-3xl sm:text-4xl lg:text-[46px] xl:text-[52px] font-extrabold text-zinc-900 dark:text-white tracking-tight leading-[1.14]">
-            Shorten Links.<br />
-            Track Performance.<br />
-            <span className="bg-gradient-to-r from-red-500 via-rose-500 to-red-400 bg-clip-text text-transparent">Grow Faster.</span>
+        {/* Left Column Content - Finely Balanced */}
+        <div className="lg:col-span-6 space-y-5 sm:space-y-6 text-center lg:text-left z-10 max-w-xl mx-auto lg:mx-0">
+          <h1 className="text-3xl sm:text-4xl lg:text-[44px] xl:text-[50px] font-extrabold text-zinc-900 dark:text-white tracking-tight leading-[1.18]">
+            <span className="whitespace-nowrap inline-block">Shorten Links.</span>
+            <br />
+            <span className="whitespace-nowrap inline-block">Track Performance.</span>
+            <br />
+            <span className="bg-gradient-to-r from-red-500 via-rose-500 to-red-400 bg-clip-text text-transparent whitespace-nowrap inline-block">Grow Faster.</span>
           </h1>
 
           <p className="text-sm sm:text-base lg:text-[17px] text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
             LinkPulse is a powerful URL shortener and analytics platform that helps you create short links,
-            track clicks, manage campaigns, and get valuable insights — all in one place.
+            track clicks, manage campaigns, and get valuable insights all in one place.
           </p>
 
           {/* Social Share Options */}
@@ -230,7 +232,7 @@ export default function LandingPage() {
                 aria-label="Share on WhatsApp"
                 className="p-2.5 sm:p-3 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-emerald-500 hover:scale-110 active:scale-95 transition-all cursor-pointer shadow-xs hover:shadow-emerald-500/20"
               >
-                <MessageCircle className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />
+                <MessageCircle className="w-4.5 h-4.5 text-emerald-500 dark:text-emerald-400" />
               </button>
               <button
                 onClick={() => handleSocialShare('instagram')}
@@ -238,7 +240,7 @@ export default function LandingPage() {
                 aria-label="Share on Instagram"
                 className="p-2.5 sm:p-3 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-rose-500 hover:scale-110 active:scale-95 transition-all cursor-pointer shadow-xs hover:shadow-rose-500/20"
               >
-                <Instagram className="w-5 h-5 text-rose-500 dark:text-rose-400" />
+                <Instagram className="w-4.5 h-4.5 text-rose-500 dark:text-rose-400" />
               </button>
               <button
                 onClick={() => handleSocialShare('linkedin')}
@@ -246,7 +248,7 @@ export default function LandingPage() {
                 aria-label="Share on LinkedIn"
                 className="p-2.5 sm:p-3 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-blue-500 hover:scale-110 active:scale-95 transition-all cursor-pointer shadow-xs hover:shadow-blue-500/20"
               >
-                <Linkedin className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                <Linkedin className="w-4.5 h-4.5 text-blue-500 dark:text-blue-400" />
               </button>
               <button
                 onClick={() => handleSocialShare('twitter')}
@@ -254,7 +256,7 @@ export default function LandingPage() {
                 aria-label="Share on X (Twitter)"
                 className="p-2.5 sm:p-3 rounded-xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-sky-500 hover:scale-110 active:scale-95 transition-all cursor-pointer shadow-xs hover:shadow-sky-500/20"
               >
-                <Twitter className="w-5 h-5 text-sky-500 dark:text-sky-400" />
+                <Twitter className="w-4.5 h-4.5 text-sky-500 dark:text-sky-400" />
               </button>
             </div>
 
@@ -270,7 +272,7 @@ export default function LandingPage() {
           <div className="pt-2">
             <Link
               to={user ? "/create-link" : "/signup"}
-              className="inline-flex items-center gap-2.5 px-7 sm:px-8 py-3.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold rounded-xl shadow-lg shadow-red-600/30 hover:shadow-red-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all text-sm sm:text-base cursor-pointer"
+              className="inline-flex items-center gap-2.5 px-7 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-semibold rounded-xl shadow-lg shadow-red-600/30 hover:shadow-red-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all text-sm sm:text-base cursor-pointer"
             >
               <span>{user ? 'Create a Short Link' : 'Get Started Free'}</span>
               <ArrowRight className="w-5 h-5" />
@@ -279,7 +281,7 @@ export default function LandingPage() {
         </div>
 
         {/* Right Column: Only the image itself is enlarged */}
-        <div className="lg:col-span-7 w-full relative flex items-center justify-center py-4 lg:py-6">
+        <div className="lg:col-span-6 w-full relative flex items-center justify-center py-4 lg:py-6">
           {/* Radial Pulse Red Glow Backdrop focused behind the image */}
           <div className="absolute w-72 h-72 sm:w-[480px] sm:h-[480px] lg:w-[620px] lg:h-[620px] xl:w-[720px] xl:h-[720px] bg-gradient-to-tr from-red-600/35 via-rose-500/25 to-red-400/15 rounded-full blur-[100px] pointer-events-none animate-pulse -z-10" />
 
