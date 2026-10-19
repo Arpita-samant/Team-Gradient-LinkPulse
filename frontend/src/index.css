@@ -20,6 +20,13 @@
   }
 }
 
+/* Custom Cursor: hide default pointer on desktop with fine mouse pointer */
+@media (pointer: fine) {
+  body, a, button, input, select, textarea, [role="button"], label {
+    cursor: none !important;
+  }
+}
+
 /* Nothing OS inspired refined micro-interactions and transitions */
 button, a, input, select, textarea {
   transition-property: color, background-color, border-color, box-shadow, transform, opacity;
@@ -36,6 +43,42 @@ input:focus, select:focus, textarea:focus {
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
+/* Attractive Keyframe Animations */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes glowPulseRed {
+  0%, 100% {
+    box-shadow: 0 0 15px -3px rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 35px 2px rgba(239, 68, 68, 0.55);
+  }
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(1000%);
+  }
+}
+
+.animate-float {
+  animation: floatSlow 4s ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+  animation: glowPulseRed 3s ease-in-out infinite;
+}
+
 /* Reduced motion accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -48,21 +91,21 @@ input:focus, select:focus, textarea:focus {
   }
 }
 
-/* Clean minimal scrollbars */
+/* Red / Dark Clean Minimal Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #09090b;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(156, 163, 175, 0.35);
+  background: rgba(239, 68, 68, 0.35);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(156, 163, 175, 0.6);
+  background: rgba(239, 68, 68, 0.7);
 }

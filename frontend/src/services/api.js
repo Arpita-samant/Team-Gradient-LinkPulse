@@ -11,15 +11,26 @@ export async function apiRequest(endpoint, options = {}) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE}${endpoint}`, {
-    ...options,
-    headers
-  });
+  let response;
+  try {
+    response = await fetch(`${API_BASE}${endpoint}`, {
+      ...options,
+      headers
+    });
+  } catch (netErr) {
+    throw new Error('Cannot connect to the backend server. Please make sure the backend is running on http://localhost:5000.');
+  }
 
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(data.message || `Request failed with status ${response.status}`);
+    if (data && data.message) {
+      throw new Error(data.message);
+    }
+    if (response.status === 500) {
+      throw new Error('Backend server is not running or encountered an error. Please make sure the backend is started on http://localhost:5000.');
+    }
+    throw new Error(`Request failed with status ${response.status}`);
   }
 
   return data;
@@ -35,7 +46,13 @@ export const authAPI = {
 export const linkAPI = {
   create: (linkData) => apiRequest('/links/create', { method: 'POST', body: JSON.stringify(linkData) }),
   getMyLinks: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
+    const cleanParams = {};
+    for (const [k, v] of Object.entries(params)) {
+      if (v !== undefined && v !== null && v !== '' && v !== 'undefined') {
+        cleanParams[k] = v;
+      }
+    }
+    const query = new URLSearchParams(cleanParams).toString();
     return apiRequest(`/links/my-links${query ? `?${query}` : ''}`);
   },
   getById: (id) => apiRequest(`/links/${id}`),
@@ -64,7 +81,13 @@ export const adminAPI = {
   updateUserStatus: (id, data) => apiRequest(`/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteUser: (id) => apiRequest(`/admin/users/${id}`, { method: 'DELETE' }),
   getLinks: (params = {}) => {
-    const query = new URLSearchParams(params).toString();
+    const cleanParams = {};
+    for (const [k, v] of Object.entries(params)) {
+      if (v !== undefined && v !== null && v !== '' && v !== 'undefined') {
+        cleanParams[k] = v;
+      }
+    }
+    const query = new URLSearchParams(cleanParams).toString();
     return apiRequest(`/admin/links${query ? `?${query}` : ''}`);
   },
   toggleSuspicious: (id) => apiRequest(`/admin/links/${id}/toggle-suspicious`, { method: 'PATCH' }),

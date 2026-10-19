@@ -2,7 +2,7 @@ import QRCode from 'qrcode';
 import bcrypt from 'bcryptjs';
 import { generateShortCode } from '../utils/base62.js';
 import { checkUrlSafety, calculateMD5 } from '../utils/safetyCheck.js';
-import { LinkService, BlockedDomainService, SystemLogService } from '../models/dataService.js';
+import { LinkService, ClickLogService, BlockedDomainService, SystemLogService } from '../models/dataService.js';
 
 // Reserved keywords that cannot be used as short aliases
 const RESERVED_ALIASES = [
@@ -12,7 +12,7 @@ const RESERVED_ALIASES = [
 
 export async function createLink(req, res) {
   try {
-    const { originalUrl, customAlias, expiryDate, password, tags, title } = req.body;
+    const { originalUrl, customAlias, expiryDate, password, tags, title, type = 'link' } = req.body;
     const userId = req.user ? req.user._id : 'usr_anonymous';
 
     if (!originalUrl) {
@@ -69,7 +69,7 @@ export async function createLink(req, res) {
       }
     }
 
-    // Expiry date validation
+    // Expiry date validation: default to 1 year from now if not explicitly set
     let parsedExpiry = null;
     if (expiryDate) {
       parsedExpiry = new Date(expiryDate);
@@ -79,6 +79,11 @@ export async function createLink(req, res) {
       if (parsedExpiry <= new Date()) {
         return res.status(400).json({ success: false, message: 'Expiry date must be in the future.' });
       }
+    } else {
+      // Default expiry date is 1 year from now if not explicitly set
+      const oneYearFromNow = new Date();
+      oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+      parsedExpiry = oneYearFromNow;
     }
 
     // Password protection hashing
@@ -138,6 +143,7 @@ export async function createLink(req, res) {
       shortCode,
       customAlias: customAlias ? customAlias.trim() : null,
       title: linkTitle,
+      type: type === 'qr' ? 'qr' : 'link',
       tags: cleanTags,
       password: hashedPassword,
       hasPassword,
@@ -172,16 +178,30 @@ export async function createLink(req, res) {
 export async function getUserLinks(req, res) {
   try {
     const userId = req.user._id;
-    const { search, tag, status, page = 1, limit = 10, sortBy = 'createdAt', order = 'desc' } = req.query;
+    const { search, tag, status, page = 1, limit = 20, sortBy = 'createdAt', order = 'desc', showAll } = req.query;
 
     const pageNum = Math.max(1, parseInt(page, 10));
     const limitNum = Math.max(1, parseInt(limit, 10));
 
+    // Strictly isolate links to the authenticated user's own userId (including admin)
+    // Global platform links are managed separately in the Admin Panel
     let links = await LinkService.find({ userId });
 
-    // Update statuses for expired links dynamically
+    const normalizeTags = (tags) => {
+      if (Array.isArray(tags)) return tags.map(t => String(t).trim()).filter(Boolean);
+      if (typeof tags === 'string') return tags.split(',').map(t => t.trim()).filter(Boolean);
+      return [];
+    };
+
+    // Update statuses for expired links dynamically and backfill 1-year expiry if not set
     const now = new Date();
     links.forEach(l => {
+      if (!l.expiryDate && l.createdAt) {
+        const d = new Date(l.createdAt);
+        d.setFullYear(d.getFullYear() + 1);
+        l.expiryDate = d.toISOString();
+        LinkService.updateById(l._id, { expiryDate: l.expiryDate });
+      }
       if (l.expiryDate && new Date(l.expiryDate) < now && l.status !== 'Expired') {
         l.status = 'Expired';
         LinkService.updateById(l._id, { status: 'Expired' });
@@ -189,30 +209,32 @@ export async function getUserLinks(req, res) {
     });
 
     // Filter by status
-    if (status && status !== 'All' && status !== 'All Links') {
-      links = links.filter(l => l.status.toLowerCase() === status.toLowerCase());
+    if (status && status !== 'All' && status !== 'All Links' && status !== 'undefined') {
+      links = links.filter(l => (l.status || 'Active').toLowerCase() === status.toLowerCase());
     }
 
     // Filter by tag
-    if (tag && tag !== 'All Tags' && tag !== 'All') {
-      links = links.filter(l => l.tags && l.tags.some(t => t.toLowerCase() === tag.toLowerCase()));
+    if (tag && tag !== 'All Tags' && tag !== 'All' && tag !== 'undefined') {
+      const targetTag = tag.trim().toLowerCase();
+      links = links.filter(l => normalizeTags(l.tags).some(t => t.toLowerCase() === targetTag));
     }
 
     // Filter by search
-    if (search && search.trim()) {
+    if (search && search.trim() && search !== 'undefined') {
       const q = search.trim().toLowerCase();
+      const tagQ = q.startsWith('#') ? q.slice(1).trim() : q;
       links = links.filter(l =>
-        l.shortCode.toLowerCase().includes(q) ||
-        l.originalUrl.toLowerCase().includes(q) ||
+        (l.shortCode && l.shortCode.toLowerCase().includes(q)) ||
+        (l.originalUrl && l.originalUrl.toLowerCase().includes(q)) ||
         (l.title && l.title.toLowerCase().includes(q)) ||
-        (l.tags && l.tags.some(t => t.toLowerCase().includes(q)))
+        normalizeTags(l.tags).some(t => t.toLowerCase().includes(q) || t.toLowerCase().includes(tagQ))
       );
     }
 
     // Sorting
     links.sort((a, b) => {
       if (sortBy === 'clicks') {
-        return order === 'asc' ? a.clicks - b.clicks : b.clicks - a.clicks;
+        return order === 'asc' ? (a.clicks || 0) - (b.clicks || 0) : (b.clicks || 0) - (a.clicks || 0);
       }
       return order === 'asc'
         ? new Date(a.createdAt) - new Date(b.createdAt)
@@ -242,18 +264,18 @@ export async function getUserLinks(req, res) {
       }
       return {
         ...l,
+        type: l.type || 'link',
+        tags: normalizeTags(l.tags),
         shortUrl,
         qrCodeDataUrl: qrCodeDataUrl || ''
       };
     }));
 
-    // Extract all unique tags for filter dropdown
-    const allUserLinks = await LinkService.find({ userId });
+    // Extract all unique tags across this user's links for the filter dropdown
+    const allLinksForTags = await LinkService.find({ userId });
     const tagSet = new Set();
-    allUserLinks.forEach(l => {
-      if (Array.isArray(l.tags)) {
-        l.tags.forEach(t => tagSet.add(t));
-      }
+    allLinksForTags.forEach(l => {
+      normalizeTags(l.tags).forEach(t => tagSet.add(t));
     });
 
     return res.json({
@@ -289,22 +311,63 @@ export async function getLinkById(req, res) {
 
     const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
     const { password, ...safeLink } = link;
+
+    // Fetch click logs and calculate analytics for this specific link
+    const clickLogs = await ClickLogService.find({ linkId: id });
+    const deviceCounts = { Desktop: 0, Mobile: 0, Tablet: 0 };
+    const browserCounts = {};
+    const referrerCounts = {};
+
+    clickLogs.forEach(log => {
+      const dev = log.device || 'Desktop';
+      deviceCounts[dev] = (deviceCounts[dev] || 0) + 1;
+
+      const br = log.browser || 'Other';
+      browserCounts[br] = (browserCounts[br] || 0) + 1;
+
+      const ref = log.referrer || 'Direct';
+      referrerCounts[ref] = (referrerCounts[ref] || 0) + 1;
+    });
+
+    const recentClicks = clickLogs.slice(-10).reverse().map(l => ({
+      _id: l._id,
+      timestamp: l.timestamp,
+      device: l.device,
+      browser: l.browser,
+      os: l.os,
+      referrer: l.referrer,
+      type: l.type
+    }));
+
     return res.json({
       success: true,
       link: {
         ...safeLink,
-        shortUrl: `${baseUrl}/${link.shortCode}`
+        shortUrl: `${baseUrl}/${link.shortCode}`,
+        analytics: {
+          totalClicks: link.clicks || 0,
+          qrScans: link.qrScans || 0,
+          deviceBreakdown: [
+            { name: 'Desktop', value: deviceCounts.Desktop },
+            { name: 'Mobile', value: deviceCounts.Mobile },
+            { name: 'Tablet', value: deviceCounts.Tablet }
+          ],
+          browsers: Object.entries(browserCounts).map(([name, count]) => ({ name, count })),
+          referrers: Object.entries(referrerCounts).map(([name, count]) => ({ name, count })),
+          recentClicks
+        }
       }
     });
   } catch (err) {
-    return res.status(500).json({ success: false, message: 'Error retrieving link.' });
+    console.error('getLinkById error:', err);
+    return res.status(500).json({ success: false, message: 'Error retrieving link details.' });
   }
 }
 
 export async function updateLink(req, res) {
   try {
     const { id } = req.params;
-    const { title, tags, status, expiryDate, password, removePassword } = req.body;
+    const { title, tags, status, expiryDate, password, removePassword, customAlias } = req.body;
 
     const link = await LinkService.findById(id);
     if (!link) {
@@ -347,13 +410,58 @@ export async function updateLink(req, res) {
       updates.hasPassword = true;
     }
 
+    // Support updating custom alias / short code
+    if (customAlias && customAlias.trim()) {
+      const cleanAlias = customAlias.trim().toLowerCase();
+      if (!/^[a-zA-Z0-9_-]{3,30}$/.test(cleanAlias)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Custom alias must be 3-30 characters and contain only letters, numbers, hyphens, or underscores.'
+        });
+      }
+
+      if (RESERVED_ALIASES.includes(cleanAlias)) {
+        return res.status(400).json({
+          success: false,
+          message: `The alias "${cleanAlias}" is a reserved system keyword.`
+        });
+      }
+
+      const existing = await LinkService.findByShortCode(cleanAlias);
+      if (existing && existing._id !== id) {
+        return res.status(409).json({
+          success: false,
+          message: `The alias "${cleanAlias}" is already taken. Please choose another.`
+        });
+      }
+
+      updates.shortCode = cleanAlias;
+      updates.customAlias = cleanAlias;
+
+      const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+      const newShortUrl = `${baseUrl}/${cleanAlias}`;
+      try {
+        updates.qrCodeDataUrl = await QRCode.toDataURL(newShortUrl, {
+          width: 300,
+          margin: 2,
+          color: { dark: '#000000', light: '#ffffff' }
+        });
+      } catch (qrErr) {
+        console.warn('QR code update error:', qrErr.message);
+      }
+    }
+
     const updated = await LinkService.updateById(id, updates);
     const { password: _, ...safeLink } = updated;
+    const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
 
     return res.json({
       success: true,
       message: 'Link updated successfully!',
-      link: safeLink
+      link: {
+        ...safeLink,
+        shortUrl: `${baseUrl}/${updated.shortCode}`
+      }
     });
   } catch (err) {
     console.error('Update link error:', err);

@@ -8,7 +8,6 @@ import {
   FolderKanban,
   BarChart3,
   ShieldAlert,
-  Sparkles,
   X
 } from 'lucide-react';
 
@@ -29,19 +28,19 @@ export default function Sidebar({ isOpen, onClose }) {
   }
 
   const content = (
-    <div className="w-64 h-full bg-[#111827] text-slate-300 flex flex-col select-none border-r border-slate-800">
+    <div className="w-64 h-full bg-white dark:bg-[#0c0c10] text-zinc-600 dark:text-zinc-300 flex flex-col select-none border-r border-zinc-200 dark:border-zinc-850 transition-colors">
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800/80">
+      <div className="h-16 flex items-center justify-between px-6 border-b border-zinc-200 dark:border-zinc-850">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-red-600 to-rose-600 flex items-center justify-center text-white shadow-md shadow-red-600/30">
             <Link2 className="w-5 h-5 -rotate-45" />
           </div>
-          <span className="font-bold text-lg text-white tracking-tight">LinkPulse</span>
+          <span className="font-bold text-lg text-zinc-900 dark:text-white tracking-tight">LinkPulse</span>
         </div>
         {/* Mobile close button */}
         <button
           onClick={onClose}
-          className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+          className="lg:hidden p-1.5 rounded-lg text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
           aria-label="Close menu"
         >
           <X className="w-5 h-5" />
@@ -63,15 +62,15 @@ export default function Sidebar({ isOpen, onClose }) {
               className={({ isActive }) =>
                 `flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-[#3b82f6] text-white shadow-md shadow-blue-500/25'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                    ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-md shadow-red-600/30'
+                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800/60'
                 }`
               }
             >
               <Icon className="w-4 h-4 shrink-0" />
               <span className="flex-1 truncate">{item.label}</span>
               {item.badge && (
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-950/80 text-red-600 dark:text-red-300 border border-red-200 dark:border-red-800/80">
                   {item.badge}
                 </span>
               )}
@@ -79,17 +78,6 @@ export default function Sidebar({ isOpen, onClose }) {
           );
         })}
       </nav>
-
-      {/* Footer Info Card */}
-      <div className="p-4 m-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
-        <div className="flex items-center gap-2 text-indigo-400 text-xs font-semibold mb-1">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Live Pulse Active</span>
-        </div>
-        <p className="text-[11px] text-slate-400 leading-relaxed">
-          Base62 NanoID shortening, custom QR codes, and live analytics per user account.
-        </p>
-      </div>
     </div>
   );
 

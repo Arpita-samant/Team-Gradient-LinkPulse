@@ -24,7 +24,11 @@ export const UserService = {
     }
     return memoryStore.data.users.find(u => {
       for (const [k, v] of Object.entries(query)) {
-        if (u[k] !== v) return false;
+        if (k === 'email') {
+          if (!u.email || u.email.trim().toLowerCase() !== String(v).trim().toLowerCase()) return false;
+        } else if (u[k] !== v) {
+          return false;
+        }
       }
       return true;
     }) || null;
@@ -41,22 +45,28 @@ export const UserService = {
   },
 
   async findByEmail(email) {
+    if (!email) return null;
+    const clean = String(email).trim().toLowerCase();
     if (isMongoDBActive()) {
-      return await MongooseModels.User.findOne({ email: email.toLowerCase() }).lean();
+      return await MongooseModels.User.findOne({ email: clean }).lean();
     }
-    return memoryStore.data.users.find(u => u.email.toLowerCase() === email.toLowerCase()) || null;
+    return memoryStore.data.users.find(u => u.email && u.email.trim().toLowerCase() === clean) || null;
   },
 
   async create(userData) {
+    const cleanData = {
+      ...userData,
+      email: userData.email ? String(userData.email).trim().toLowerCase() : userData.email
+    };
     if (isMongoDBActive()) {
-      const created = await MongooseModels.User.create(userData);
+      const created = await MongooseModels.User.create(cleanData);
       return created.toObject();
     }
     const newUser = {
       _id: `usr_${idGen()}`,
-      ...userData,
-      status: userData.status || 'active',
-      role: userData.role || 'user',
+      ...cleanData,
+      status: cleanData.status || 'active',
+      role: cleanData.role || 'user',
       createdAt: new Date().toISOString()
     };
     memoryStore.data.users.push(newUser);

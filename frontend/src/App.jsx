@@ -14,6 +14,7 @@ import PasswordPromptPage from './pages/PasswordPromptPage';
 import LinkStatusPage from './pages/LinkStatusPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import CustomCursor from './components/CustomCursor';
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -38,6 +39,7 @@ export default function App() {
     <ThemeProvider>
       <AuthProvider>
         <BrowserRouter>
+          <CustomCursor />
           <Routes>
             {/* Public Landing Page */}
             <Route path="/" element={<LandingPage />} />

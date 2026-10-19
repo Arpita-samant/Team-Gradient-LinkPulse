@@ -9,7 +9,7 @@ export default function DashboardLayout() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 transition-colors">
+    <div className="flex min-h-screen bg-[#f8f9fa] dark:bg-[#08080a] text-zinc-900 dark:text-zinc-100 transition-colors selection:bg-red-500 selection:text-white">
       {/* Sidebar with mobile drawer support */}
       <Sidebar
         isOpen={mobileSidebarOpen}

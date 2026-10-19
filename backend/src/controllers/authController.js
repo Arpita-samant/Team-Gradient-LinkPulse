@@ -10,13 +10,22 @@ export async function register(req, res) {
       return res.status(400).json({ success: false, message: 'Please provide name, email, and password.' });
     }
 
+    const cleanEmail = email.trim().toLowerCase();
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    if (!gmailRegex.test(cleanEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Registration requires a valid @gmail.com address (e.g. yourname@gmail.com).'
+      });
+    }
+
     if (password.length < 6) {
       return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long.' });
     }
 
-    const existing = await UserService.findByEmail(email);
+    const existing = await UserService.findByEmail(cleanEmail);
     if (existing) {
-      return res.status(409).json({ success: false, message: 'An account with this email already exists.' });
+      return res.status(409).json({ success: false, message: 'An account with this Gmail address already exists.' });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -24,7 +33,7 @@ export async function register(req, res) {
 
     const newUser = await UserService.create({
       name: name.trim(),
-      email: email.trim().toLowerCase(),
+      email: cleanEmail,
       password: hashedPassword,
       role: 'user',
       status: 'active'

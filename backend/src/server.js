@@ -1,6 +1,6 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
 import authRoutes from './routes/authRoutes.js';
@@ -9,8 +9,6 @@ import qrRoutes from './routes/qrRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import { handleRedirect } from './controllers/redirectController.js';
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Link2, ArrowRight, ShieldCheck, UserCheck, AlertCircle, X } from 'lucide-react';
+import { Link2, ArrowRight, ShieldCheck, AlertCircle, X, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -25,11 +26,11 @@ export default function LoginPage() {
     }
   };
 
-  const handleQuickDemo = async (demoEmail, demoPass) => {
+  const handleAdminDemo = async () => {
     try {
       setLoading(true);
       setError(null);
-      await login(demoEmail, demoPass);
+      await login('samantarpita70@gmail.com', 'arpitasamant12');
       navigate('/analytics');
     } catch (err) {
       setError(err.message);
@@ -39,33 +40,36 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 relative">
-      <div className="relative max-w-md w-full bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-slate-200 dark:border-slate-700/80 space-y-6">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-white dark:bg-[#08080a] text-zinc-900 dark:text-zinc-100 relative selection:bg-red-500 selection:text-white transition-colors">
+      {/* Background Ambient Glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-600/15 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="relative max-w-md w-full bg-white dark:bg-[#121217] rounded-3xl p-8 shadow-xl dark:shadow-2xl border border-zinc-200 dark:border-zinc-800/80 space-y-6 backdrop-blur-xl transition-colors">
         {/* Cross / Close button to return to home */}
         <button
           onClick={() => navigate('/')}
           aria-label="Close"
           title="Return to Home"
-          className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors cursor-pointer"
+          className="absolute top-5 right-5 p-2 rounded-xl text-zinc-400 hover:text-zinc-800 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Brand */}
         <div className="text-center space-y-2 pt-1">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white mx-auto shadow-md shadow-indigo-500/20">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-red-600 to-rose-600 flex items-center justify-center text-white mx-auto shadow-lg shadow-red-600/30">
             <Link2 className="w-6 h-6 -rotate-45" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
             Sign in to LinkPulse
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-zinc-600 dark:text-zinc-400">
             Enter your credentials to access your dashboard & analytics
           </p>
         </div>
 
         {error && (
-          <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-600 dark:text-rose-300 text-xs flex items-center gap-2">
+          <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-300 text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -73,7 +77,7 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4 text-sm">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
               Email Address
             </label>
             <input
@@ -81,59 +85,61 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="arpita@example.com"
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#5850ec]"
+              placeholder="samantarpita70@gmail.com"
+              className="w-full px-4 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-750 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
               Password
             </label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#5850ec]"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full px-4 py-2.5 pr-11 rounded-xl bg-zinc-50 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-750 text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 dark:hover:text-white transition-colors cursor-pointer"
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl font-semibold text-white bg-[#5850ec] hover:bg-indigo-600 active:scale-[0.98] transition-all shadow-md shadow-indigo-500/25 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 active:scale-[0.98] transition-all shadow-lg shadow-red-600/30 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             <span>{loading ? 'Signing in...' : 'Sign In'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
 
-        {/* 1-Click Demo Buttons for Fast Evaluation */}
-        <div className="pt-2 border-t border-slate-100 dark:border-slate-700/80 space-y-2">
-          <p className="text-[11px] text-center text-slate-400 font-medium">Quick Demo Accounts</p>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => handleQuickDemo('arpita@example.com', 'password123')}
-              className="px-3 py-2 rounded-xl text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-            >
-              <UserCheck className="w-3.5 h-3.5" />
-              <span>Arpita (User)</span>
-            </button>
-            <button
-              onClick={() => handleQuickDemo('admin@linkpulse.com', 'admin123')}
-              className="px-3 py-2 rounded-xl text-xs font-semibold bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/60 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Admin</span>
-            </button>
-          </div>
+        {/* 1-Click Demo Button for Admin */}
+        <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800 space-y-2">
+          <p className="text-[11px] text-center text-zinc-500 dark:text-zinc-400 font-medium">Quick Admin Login</p>
+          <button
+            type="button"
+            onClick={handleAdminDemo}
+            className="w-full px-3 py-2.5 rounded-xl text-xs font-semibold bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/40 border border-red-200 dark:border-red-800/60 text-red-600 dark:text-red-300 flex items-center justify-center gap-2 transition-colors cursor-pointer"
+          >
+            <ShieldCheck className="w-4 h-4 text-red-500 dark:text-red-400" />
+            <span>Login as Admin (Arpita Samant)</span>
+          </button>
         </div>
 
-        <div className="text-center text-xs text-slate-500">
+        <div className="text-center text-xs text-zinc-500 dark:text-zinc-400">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-indigo-600 font-semibold hover:underline">
+          <Link to="/signup" className="text-red-500 hover:text-red-600 dark:text-red-400 font-semibold hover:underline">
             Sign up free
           </Link>
         </div>

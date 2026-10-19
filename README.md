@@ -1,163 +1,94 @@
-<<<<<<< HEAD
-# LinkPulse — URL Shortener & Analytics Platform
+## 📌 Problem Statement
 
-**LinkPulse** is a full-stack, enterprise-grade URL Shortener and Live Analytics Platform designed to convert long URLs into clean, branded short links. It features instant QR code generation, click & scan tracking, campaign organization, role-based access control, advanced security filtering, and an administrative control panel.
+**Long URLs:** Difficult to share, manage, and read across communication channels.
 
----
+**Lack of Tracking:** Manual tracking of link performance is cumbersome and inefficient.
 
-## 🌟 Architecture Overview
+**Usability Gaps:** Users need a simple, centralized way to monitor clicks, device stats, and link status.
 
-LinkPulse is built using a modern 3-tier architecture:
+**Advanced Controls:** Certain links require custom aliases, password protection, expiration dates, or click limits for better security.
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Frontend Layer (Vercel)                  │
-│  React.js (v19) + Vite + Tailwind CSS + Lucide + Recharts   │
-│                                                             │
-│  • Landing Page (Dark/Light mode, Interactive Hero)         │
-│  • Short Link Creator (Base62 + NanoID, Expiry, Password)    │
-│  • Custom QR Code Studio (Custom Colors, PNG Download)      │
-│  • Link Management Dashboard (Search, Filter, Export)       │
-│  • Live Analytics Dashboard (Interactive Recharts Trends)   │
-│  • Security Admin Panel (Users, Links, Domain Blocklist)     │
-└──────────────────────────────┬──────────────────────────────┘
-                               │ HTTPS / REST API / JWT
-┌──────────────────────────────▼──────────────────────────────┐
-│                  Backend (Node.js + Express)                │
-│                                                             │
-│  • API Gateway & REST Endpoints (/api/...)                  │
-│  • HTTPS & Rate Limiting (express-rate-limit)               │
-│  • Authentication Service (bcryptjs + JWT, Role Auth)       │
-│  • Security & Validation (MD5 checksums, domain blacklist)  │
-│  • URL Shortening Engine (Nano ID + Base62 Encoding)        │
-│  • QR Generation Engine (qrcode library)                    │
-│  • Redirection & Tracking Service (Device / OS / Browser)   │
-│  • Analytics & Audit Log Services                           │
-└──────────────────────────────┬──────────────────────────────┘
-                               │ Read / Write Operations
-┌──────────────────────────────▼──────────────────────────────┐
-│                    Database Layer                           │
-│  MongoDB Atlas (Mongoose) + Zero-Config Persistent Store    │
-│                                                             │
-│  • Users Collection (Roles: user, admin)                    │
-│  • Links Collection (Original, ShortCode, Hash, Flags)      │
-│  • Analytics & ClickLogs (IP, Device, OS, Browser, Clicks)  │
-│  • BlockedDomains Collection (Malware / Phishing filters)   │
-│  • SystemLogs Collection (Audit trails & Security alerts)   │
-└─────────────────────────────────────────────────────────────┘
-```
 
----
 
-## 🚀 Key Features
+## 💡 Solution Overview
 
-### 1. Landing Page
-- Modern, high-converting hero layout with responsive design.
-- Dark / Light mode toggle.
-- Interactive link preview card with copy button, QR preview, and mini performance metric cards.
-- Bottom feature highlight cards: Shorten Links, Track Analytics, Organize Campaigns, and QR Codes.
+**LinkPulse** is a comprehensive URL Shortener and Real-Time Analytics Platform designed to bridge the gap between simple link redirection and deep performance tracking. It converts long URLs into concise, manageable short links while offering QR code generation, click metrics, device detection, robust security features, and a dedicated admin panel in one unified interface.
 
-### 2. URL Shortener Engine
-- **NanoID + Base62 Encoding** for short URLs.
-- **Custom Branded Aliases**: Choose your own custom short code (with validation against reserved system keywords).
-- **Expiry Dates**: Automatically expire links after a set date.
-- **Password Protection**: Secure confidential destinations with bcrypt-hashed passwords.
-- **Tag Organization**: Categorize links (e.g. `marketing`, `docs`, `education`).
-- **Target URL Integrity**: MD5 hash calculated for rapid deduplication and integrity verification.
 
-### 3. QR Code Studio
-- Generates high-resolution vector QR codes for any link or custom text.
-- Customizable QR code foreground and background colors (Black, Indigo, Mint, Amber, etc.).
-- One-click **PNG Download**.
-- Web Share API / Copy Link integration.
 
-### 4. Link Management Dashboard
-- Table view with columns: Short URL, Original URL, Tags badges, Clicks count, Created Date, Status, and Actions.
-- Search by URL, title, or tag.
-- Filter by status (`Active`, `Paused`, `Expired`, `Blocked`) and dynamic tag dropdown.
-- Single-click status toggling (`Active` ⟷ `Paused`).
-- Edit modal for modifying titles, tags, passwords, and expiry dates.
-- Export links to **CSV** or **JSON**.
+### Core Workflows
 
-### 5. Live Analytics Dashboard
-- Dynamic greeting (`"Good Morning, Arpita!"`) with calendar range indicator.
-- 4 Key Metric KPIs with week-over-week trends:
-  - **Total Links** (24, +8% vs. last week)
-  - **Total Clicks** (1,248, +16% vs. last week)
-  - **Total QR Codes** (12, +16% vs. last week)
-  - **Total Scans** (384, +14% vs. last week)
-- **Click Trends Graph**: Interactive Recharts area chart with 7 Days / 30 Days / Custom views.
-- **Top Performing Links**: Real-time rank list with click counts and positive growth percentages.
-- **Device & Tech Detection**: Categorized into Desktop, Mobile, and Tablet via `ua-parser-js`, alongside top browsers (Chrome, Safari, Firefox, Edge) and referrers.
+**Create Short Link:** Input an original URL $\rightarrow$ generate a unique short code (via Nano ID / Base62) or custom alias $\rightarrow$ apply rules (expiry, password, tags) $\rightarrow$ save securely.
 
-### 6. Administrator Security Panel
-- High-level platform KPIs: Total Users, Total Links, Total QR Codes, and Suspicious Links.
-- Tabbed management views: Users, Links, QR Codes, Suspicious Links, and Security Settings.
-- User management: view statuses, edit roles, or delete users.
-- Flag or unflag suspicious destinations with automatic redirection blocking.
-- Add / remove custom blocked domains from the security blocklist.
-- View real-time security audit trails and system activity logs.
+**Redirection & Tracking:** Visitors click the short link $\rightarrow$ Express backend validates active status, expiry, and password $\rightarrow$ records analytics metrics $\rightarrow$ redirects seamlessly.
 
-### 7. Redirection & Visitor Flow
-- Visitors opening `http://localhost:5000/:shortCode` are evaluated:
-  - If blocked: redirected to security warning view (`/link-status?type=blocked`).
-  - If paused: redirected to paused campaign view (`/link-status?type=paused`).
-  - If expired: marked expired and redirected (`/link-status?type=expired`).
-  - If password protected: redirected to password prompt screen (`/p/:shortCode`).
-  - If valid: Device, OS, Browser, IP, and Referrer are logged, click counters increment, and HTTP 302 redirection executes to destination.
+**Analytics & Management:** Centralized dashboard visualizes live click trends, total scans, and top-performing links using dynamic charting tools.
 
----
 
-## 🔑 Demo Accounts for Testing
 
-LinkPulse is pre-seeded with realistic demonstration accounts:
+## ✨ Features
 
-| Role | Email | Password | Access Level |
-|---|---|---|---|
-| **User (Arpita)** | `arpita@example.com` | `password123` | Link creation, QR studio, Link Management, Analytics |
-| **System Admin** | `admin@linkpulse.com` | `admin123` | Complete Admin Panel, Blocklist, User Control, System Logs |
+**Landing Page:** Modern UI supporting dark/light mode toggle, smooth page routing, and authentication (Login/Signup).
 
-> **Tip:** You can switch between Arpita (User) and Admin with one click via the role switcher in the top navigation bar or on the login page!
+**Link Creation & Rules:** Generate short URLs, custom aliases, set expiry dates, add password protection, and organize links using tags.
 
----
+**QR Code Generation:** Generate custom QR codes for any link, download as PNG, or share instantly.
+
+**Link Management Dashboard:** Filter and search saved links by tags, view total clicks, creation dates, and statuses.
+
+**Advanced Analytics Dashboard:** Track total links, clicks, QR codes, scan metrics, and view real-time click trend graphs powered by Recharts alongside device detection breakdown.
+
+**Admin Panel:** Monitor platform activity, total users, total links, total QR codes, and review/disable suspicious links.
+
+**Security:** Strict URL validation, block unsafe websites, HTTPS enforcement, rate limiting, and bcrypt password hashing.
+
+
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React 19, Vite, Tailwind CSS, Lucide React, Recharts, React Router v7
-- **Backend**: Node.js, Express.js (ES Modules)
-- **Shortening Algorithm**: NanoID + Base62 Encoding
-- **Security & Validation**: MD5 checksums, Regex URL parser, Express Rate Limiter, bcryptjs
-- **QR Engine**: QRCode library
-- **Device & Client Detection**: `ua-parser-js`
-- **Database**: MongoDB Atlas (Mongoose) with fallback persistent store (`backend/data/store.json`)
+### Frontend
 
----
+**Core:** React.js, Vite (Fast dev server & builds)
 
-## 💻 Getting Started Locally
+**Styling:** Tailwind CSS
+
+**Routing:** React Router
+
+**Visualizations:** Recharts (Click trends & analytics)
+
+### Backend
+
+**Server:** Node.js, Express.js (REST API architecture)
+
+**Authentication:** bcrypt (Password hashing), JSON Web Tokens (JWT)
+
+**URL Engine:** Nano ID & Base62 Encoding
+
+**QR Code:** QR Code generation library
+
+### Database & Storage
+
+**Database:** MongoDB Atlas (Collections for Users, Links, and Analytics/Logs)
+
+### Deployment & Version Control
+
+**Hosting:** Vercel (Frontend & Serverless deployment)
+
+**Version Control:** Git & GitHub
+
+
+
+## 🚀 Setup Instructions
+
+Follow these steps to run LinkPulse locally on your machine:
 
 ### Prerequisites
-- Node.js (v18 or newer)
-- npm (v9 or newer)
 
-### 1. Clone & Enter Directory
-```bash
-cd "c:\Users\HP\OneDrive\Desktop\Hackathon-Project"
-```
+Node.js installed on your system
 
-### 2. Run Backend
-```bash
-cd backend
-npm install
-npm start
-```
-*Backend runs on: `http://localhost:5000`*
+MongoDB Atlas account or local MongoDB instance
 
-### 3. Run Frontend
-Open a new terminal window:
-```bash
-cd frontend
-npm install
-npm run dev
-```
-*Frontend runs on: `http://localhost:5173`*
-
+### 1. Clone the Repository
+```text-plain
+git clone https://github.com/your-username/linkpulse.git
+cd linkpulse
