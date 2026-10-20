@@ -5,10 +5,8 @@ const idGen = customAlphabet('1234567890abcdef', 12);
 
 export const UserService = {
   async find(query = {}) {
-    if (isMongoDBActive()) {
-      return await MongooseModels.User.find(query).select('-password').lean();
-    }
-    return memoryStore.data.users
+    memoryStore.reload();
+    let users = memoryStore.data.users
       .filter(u => {
         for (const [k, v] of Object.entries(query)) {
           if (u[k] !== v) return false;
@@ -16,13 +14,27 @@ export const UserService = {
         return true;
       })
       .map(({ password, ...u }) => u);
+
+    if (isMongoDBActive()) {
+      try {
+        const mongoUsers = await MongooseModels.User.find(query).select('-password').lean();
+        if (mongoUsers && mongoUsers.length > 0) {
+          const knownEmails = new Set(users.map(u => u.email));
+          for (const mu of mongoUsers) {
+            if (!knownEmails.has(mu.email)) {
+              users.push(mu);
+            }
+          }
+        }
+      } catch (err) {}
+    }
+
+    return users;
   },
 
   async findWithPassword(query = {}) {
-    if (isMongoDBActive()) {
-      return await MongooseModels.User.findOne(query).lean();
-    }
-    return memoryStore.data.users.find(u => {
+    memoryStore.reload();
+    const user = memoryStore.data.users.find(u => {
       for (const [k, v] of Object.entries(query)) {
         if (k === 'email') {
           if (!u.email || u.email.trim().toLowerCase() !== String(v).trim().toLowerCase()) return false;
@@ -31,26 +43,52 @@ export const UserService = {
         }
       }
       return true;
-    }) || null;
+    });
+
+    if (user) return user;
+
+    if (isMongoDBActive()) {
+      try {
+        const mongoUser = await MongooseModels.User.findOne(query).lean();
+        if (mongoUser) {
+          memoryStore.data.users.push(mongoUser);
+          memoryStore.save();
+          return mongoUser;
+        }
+      } catch (err) {}
+    }
+
+    return null;
   },
 
   async findById(id) {
-    if (isMongoDBActive()) {
-      return await MongooseModels.User.findById(id).select('-password').lean();
+    memoryStore.reload();
+    const user = memoryStore.data.users.find(u => u._id === String(id) || String(u._id) === String(id));
+    if (user) {
+      const { password, ...safeUser } = user;
+      return safeUser;
     }
-    const user = memoryStore.data.users.find(u => u._id === id);
-    if (!user) return null;
-    const { password, ...safeUser } = user;
-    return safeUser;
+    if (isMongoDBActive()) {
+      try {
+        return await MongooseModels.User.findById(id).select('-password').lean();
+      } catch (err) {}
+    }
+    return null;
   },
 
   async findByEmail(email) {
     if (!email) return null;
     const clean = String(email).trim().toLowerCase();
+    memoryStore.reload();
+    const user = memoryStore.data.users.find(u => u.email && u.email.trim().toLowerCase() === clean);
+    if (user) return user;
+
     if (isMongoDBActive()) {
-      return await MongooseModels.User.findOne({ email: clean }).lean();
+      try {
+        return await MongooseModels.User.findOne({ email: clean }).lean();
+      } catch (err) {}
     }
-    return memoryStore.data.users.find(u => u.email && u.email.trim().toLowerCase() === clean) || null;
+    return null;
   },
 
   async create(userData) {
@@ -58,10 +96,8 @@ export const UserService = {
       ...userData,
       email: userData.email ? String(userData.email).trim().toLowerCase() : userData.email
     };
-    if (isMongoDBActive()) {
-      const created = await MongooseModels.User.create(cleanData);
-      return created.toObject();
-    }
+
+    memoryStore.reload();
     const newUser = {
       _id: `usr_${idGen()}`,
       ...cleanData,
@@ -69,38 +105,67 @@ export const UserService = {
       role: cleanData.role || 'user',
       createdAt: new Date().toISOString()
     };
-    memoryStore.data.users.push(newUser);
+
+    const existingIdx = memoryStore.data.users.findIndex(u => u.email === cleanData.email);
+    if (existingIdx >= 0) {
+      memoryStore.data.users[existingIdx] = newUser;
+    } else {
+      memoryStore.data.users.push(newUser);
+    }
     memoryStore.save();
+
+    if (isMongoDBActive()) {
+      try {
+        await MongooseModels.User.create(cleanData);
+      } catch (err) {
+        console.warn('[DB] Mongo user sync warning:', err.message);
+      }
+    }
+
     return newUser;
   },
 
   async updateById(id, updates) {
-    if (isMongoDBActive()) {
-      return await MongooseModels.User.findByIdAndUpdate(id, updates, { new: true }).select('-password').lean();
+    memoryStore.reload();
+    const idx = memoryStore.data.users.findIndex(u => u._id === id || String(u._id) === String(id));
+    if (idx !== -1) {
+      memoryStore.data.users[idx] = { ...memoryStore.data.users[idx], ...updates };
+      memoryStore.save();
     }
-    const idx = memoryStore.data.users.findIndex(u => u._id === id);
+
+    if (isMongoDBActive()) {
+      try {
+        return await MongooseModels.User.findByIdAndUpdate(id, updates, { new: true }).select('-password').lean();
+      } catch (err) {}
+    }
+
     if (idx === -1) return null;
-    memoryStore.data.users[idx] = { ...memoryStore.data.users[idx], ...updates };
-    memoryStore.save();
     const { password, ...safeUser } = memoryStore.data.users[idx];
     return safeUser;
   },
 
   async deleteById(id) {
-    if (isMongoDBActive()) {
-      return await MongooseModels.User.findByIdAndDelete(id);
+    memoryStore.reload();
+    const idx = memoryStore.data.users.findIndex(u => u._id === id || String(u._id) === String(id));
+    let removed = false;
+    if (idx !== -1) {
+      memoryStore.data.users.splice(idx, 1);
+      memoryStore.save();
+      removed = true;
     }
-    const idx = memoryStore.data.users.findIndex(u => u._id === id);
-    if (idx === -1) return false;
-    memoryStore.data.users.splice(idx, 1);
-    memoryStore.save();
-    return true;
+
+    if (isMongoDBActive()) {
+      try {
+        await MongooseModels.User.findByIdAndDelete(id);
+        removed = true;
+      } catch (err) {}
+    }
+
+    return removed;
   },
 
   async count() {
-    if (isMongoDBActive()) {
-      return await MongooseModels.User.countDocuments();
-    }
+    memoryStore.reload();
     return memoryStore.data.users.length;
   }
 };

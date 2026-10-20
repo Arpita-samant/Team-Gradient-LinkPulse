@@ -1,0 +1,430 @@
+{
+  "users": [
+    {
+      "_id": "usr_admin_arpita_01",
+      "name": "Arpita Samant",
+      "email": "samantarpita70@gmail.com",
+      "password": "$2b$10$aD3KNRLyyAZPLZ8H7Qzln.Ug6bzJ./JVGMBtVCPrc8DAjOYrZVaGa",
+      "role": "admin",
+      "status": "active",
+      "createdAt": "2026-10-19T08:00:00.000Z"
+    },
+    {
+      "_id": "usr_0917138f6ab6",
+      "name": "Test User",
+      "email": "testuser2026@gmail.com",
+      "password": "$2b$10$hXscBCHMcYuT4U4adbpsP.7VN7Y9Y7Q4Ofm590UV0Kxmt8wHVpaEO",
+      "role": "user",
+      "status": "active",
+      "createdAt": "2026-10-19T08:36:49.598Z"
+    },
+    {
+      "_id": "usr_d77cd3f462d7",
+      "name": "Anmol Babbar",
+      "email": "anmolbabbar877@gmail.com",
+      "password": "$2b$10$HDqX91PNBqXGSCwpLddNIuiKNlmyw454lmTeyO6KtI9HazUN9N0Nq",
+      "role": "user",
+      "status": "active",
+      "createdAt": "2026-10-19T08:40:25.017Z"
+    }
+  ],
+  "links": [
+    {
+      "_id": "lnk_b5ab3ea6a6d7",
+      "userId": "usr_admin_arpita_01",
+      "originalUrl": "https://www.amazon.in/?&tag=googhydrabk1-21&ref=pd_sl_5szpgfto9i_e&adgrpid=155259813593&hvpone=&hvptwo=&hvadid=825671333270&hvpos=&hvnetw=g&hvrand=14551932990819463093&hvqmt=e&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9183273&hvtargid=kwd-64107830&hydadcr=14452_2479340&mcid=e9c68a2d0f333bcaacd29ec00843c329&hvocijid=14551932990819463093--&hvexpln=nav&gad_source=1",
+      "shortCode": "amazon",
+      "customAlias": "amazon",
+      "title": "amazon12",
+      "type": "link",
+      "tags": [
+        "online"
+      ],
+      "password": null,
+      "hasPassword": false,
+      "expiryDate": "2026-10-20T00:00:00.000Z",
+      "status": "Expired",
+      "isSuspicious": false,
+      "qrCodeDataUrl": "data:image/png;base64,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",
+      "urlHash": "33ea7f509123b58bd5d2c6e6b10e4565",
+      "clicks": 0,
+      "qrScans": 0,
+      "createdAt": "2026-10-19T13:21:16.181Z",
+      "updatedAt": "2026-10-20T02:56:49.612Z"
+    },
+    {
+      "_id": "lnk_98971748140d",
+      "userId": "usr_d77cd3f462d7",
+      "originalUrl": "https://www.flipkart.com/6bo/b5g/~cs-gwlvbrohgu/pr?sid=6bo%2Cb5g&collection-tab-name=Expertbook&sort=price_asc&PARAM=8748&ctx=eyJjYXJkQ29udGV4dCI6eyJhdHRyaWJ1dGVzIjp7InNvdXJjZUNvbnRlbnRUeXBlIjp7InNpbmdsZVZhbHVlQXR0cmlidXRlIjp7ImtleSI6InNvdXJjZUNvbnRlbnRUeXBlIiwiaW5mZXJlbmNlVHlwZSI6IlNDVCIsInZhbHVlIjoiSUFEIiwidmFsdWVUeXBlIjoiU0lOR0xFX1ZBTFVFRCJ9fX19fQ%3D%3D&nnc=8FHACNU1AFWF_IAD&BU=Mixed",
+      "shortCode": "anmol2",
+      "customAlias": "anmol2",
+      "title": "www.flipkart.com/6bo/b5g/~cs-gwlvbro",
+      "tags": [
+        "flipkart"
+      ],
+      "password": null,
+      "hasPassword": false,
+      "expiryDate": "2027-10-19T09:07:15.805Z",
+      "status": "Active",
+      "isSuspicious": false,
+      "qrCodeDataUrl": "data:image/png;base64,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",
+      "urlHash": "b5ac8b115c747ce74f926f3af4902ee5",
+      "clicks": 0,
+      "qrScans": 0,
+      "createdAt": "2026-10-19T09:07:15.805Z",
+      "updatedAt": "2026-10-19T09:07:15.805Z"
+    },
+    {
+      "_id": "lnk_7f03ec10c2e0",
+      "userId": "usr_d77cd3f462d7",
+      "originalUrl": "https://www.amazon.in/?&tag=googhydrabk1-21&ref=pd_sl_7hz2t19t5c_e&adgrpid=155259815513&hvpone=&hvptwo=&hvadid=825671333480&hvpos=&hvnetw=g&hvrand=12191796738053687932&hvqmt=e&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9183273&hvtargid=kwd-10573980&hydadcr=14453_2479342&mcid=4c22dcdee2bf3a71b0b832c5c4ba9c17&hvocijid=12191796738053687932--&hvexpln=nav&gad_source=1",
+      "shortCode": "amazon-deal",
+      "customAlias": "amazon-deal",
+      "title": "www.amazon.in",
+      "tags": [],
+      "password": null,
+      "hasPassword": false,
+      "expiryDate": "2027-10-19T09:05:00.078Z",
+      "status": "Active",
+      "isSuspicious": false,
+      "qrCodeDataUrl": "data:image/png;base64,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",
+      "urlHash": "d92673d122ee8301baa0daee4ef2d489",
+      "clicks": 2,
+      "qrScans": 0,
+      "createdAt": "2026-10-19T09:05:00.078Z",
+      "updatedAt": "2026-10-19T12:58:49.925Z"
+    }
+  ],
+  "clickLogs": [
+    {
+      "_id": "log_450a2312b39e",
+      "linkId": "lnk_7f03ec10c2e0",
+      "shortCode": "anmol",
+      "userId": "usr_d77cd3f462d7",
+      "type": "click",
+      "ip": "::1",
+      "device": "Desktop",
+      "browser": "Chrome",
+      "os": "Windows",
+      "referrer": "Direct",
+      "timestamp": "2026-10-19T09:05:17.884Z"
+    },
+    {
+      "_id": "log_6f38dc14eddd",
+      "linkId": "lnk_7f03ec10c2e0",
+      "shortCode": "amazon-deal",
+      "userId": "usr_d77cd3f462d7",
+      "type": "click",
+      "ip": "::1",
+      "device": "Desktop",
+      "browser": "Other",
+      "os": "Other",
+      "referrer": "Direct",
+      "timestamp": "2026-10-19T12:59:00.793Z"
+    }
+  ],
+  "blockedDomains": [
+    {
+      "_id": "bd_1",
+      "domain": "malware-test.com",
+      "reason": "Known malware distributor",
+      "addedBy": "Arpita Samant",
+      "createdAt": "2026-10-19T08:00:00.000Z"
+    },
+    {
+      "_id": "bd_2",
+      "domain": "phishing-site.ru",
+      "reason": "Credential phishing target",
+      "addedBy": "Arpita Samant",
+      "createdAt": "2026-10-19T08:00:00.000Z"
+    }
+  ],
+  "systemLogs": [
+    {
+      "action": "USER_REGISTERED",
+      "details": "New user registered: freshaccount2026@gmail.com",
+      "userId": "usr_3b2526e661be",
+      "userEmail": "freshaccount2026@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-20T08:15:41.789Z",
+      "_id": "sys_5aa9cf1a2cb9"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: anmolbabbar877@gmail.com",
+      "userId": "usr_d77cd3f462d7",
+      "userEmail": "anmolbabbar877@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-20T03:17:51.499Z",
+      "_id": "sys_acd22a99ab83"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-20T03:16:40.571Z",
+      "_id": "sys_be337f7214e1"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T19:17:59.366Z",
+      "_id": "sys_ed7d250fc5f5"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T19:02:37.537Z",
+      "_id": "sys_8607c2d2942e"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T18:50:28.390Z",
+      "_id": "sys_6052dc26ad30"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: anmolbabbar877@gmail.com",
+      "userId": "usr_d77cd3f462d7",
+      "userEmail": "anmolbabbar877@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T16:20:25.069Z",
+      "_id": "sys_2e0e21f101ab"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T16:18:08.615Z",
+      "_id": "sys_e56555c8b4bb"
+    },
+    {
+      "action": "LINK_CREATED",
+      "details": "Short link created: /amazon -> https://www.amazon.in/?&tag=googhydrabk1-21&ref=pd_sl_5szpgfto9i_e&adgrpid=155259813593&hvpone=&hvptwo=&hvadid=825671333270&hvpos=&hvnetw=g&hvrand=14551932990819463093&hvqmt=e&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9183273&hvtargid=kwd-64107830&hydadcr=14452_2479340&mcid=e9c68a2d0f333bcaacd29ec00843c329&hvocijid=14551932990819463093--&hvexpln=nav&gad_source=1",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T13:21:16.184Z",
+      "_id": "sys_fe8a266c3d42"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T13:16:24.350Z",
+      "_id": "sys_bbd3e8140e22"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: anmolbabbar877@gmail.com",
+      "userId": "usr_d77cd3f462d7",
+      "userEmail": "anmolbabbar877@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T13:13:23.494Z",
+      "_id": "sys_81c1c7b69321"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T12:58:49.882Z",
+      "_id": "sys_a21dd4892d31"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T12:57:57.923Z",
+      "_id": "sys_bf78345c6642"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T12:57:35.685Z",
+      "_id": "sys_5d146b0061a2"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: anmolbabbar877@gmail.com",
+      "userId": "usr_d77cd3f462d7",
+      "userEmail": "anmolbabbar877@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T12:38:46.063Z",
+      "_id": "sys_794ec0ee9d14"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T12:38:30.698Z",
+      "_id": "sys_1df5441d7da3"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T09:24:57.658Z",
+      "_id": "sys_7cb938a1e931"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T09:23:26.425Z",
+      "_id": "sys_44be7c0ebd79"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T09:18:08.482Z",
+      "_id": "sys_b2cf5c93bbd3"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T09:17:58.115Z",
+      "_id": "sys_0482ac6a7ebb"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: anmolbabbar877@gmail.com",
+      "userId": "usr_d77cd3f462d7",
+      "userEmail": "anmolbabbar877@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T09:17:23.869Z",
+      "_id": "sys_43a00677a807"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T09:15:42.835Z",
+      "_id": "sys_f32940204bd6"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T09:15:02.360Z",
+      "_id": "sys_6c953e0b1acb"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T09:14:00.657Z",
+      "_id": "sys_7e158d2ad77f"
+    },
+    {
+      "action": "LINK_CREATED",
+      "details": "Short link created: /anmol2 -> https://www.flipkart.com/6bo/b5g/~cs-gwlvbrohgu/pr?sid=6bo%2Cb5g&collection-tab-name=Expertbook&sort=price_asc&PARAM=8748&ctx=eyJjYXJkQ29udGV4dCI6eyJhdHRyaWJ1dGVzIjp7InNvdXJjZUNvbnRlbnRUeXBlIjp7InNpbmdsZVZhbHVlQXR0cmlidXRlIjp7ImtleSI6InNvdXJjZUNvbnRlbnRUeXBlIiwiaW5mZXJlbmNlVHlwZSI6IlNDVCIsInZhbHVlIjoiSUFEIiwidmFsdWVUeXBlIjoiU0lOR0xFX1ZBTFVFRCJ9fX19fQ%3D%3D&nnc=8FHACNU1AFWF_IAD&BU=Mixed",
+      "userId": "usr_d77cd3f462d7",
+      "userEmail": "anmolbabbar877@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T09:07:15.805Z",
+      "_id": "sys_84f0afe7df5e"
+    },
+    {
+      "action": "LINK_CREATED",
+      "details": "Short link created: /anmol -> https://www.amazon.in/?&tag=googhydrabk1-21&ref=pd_sl_7hz2t19t5c_e&adgrpid=155259815513&hvpone=&hvptwo=&hvadid=825671333480&hvpos=&hvnetw=g&hvrand=12191796738053687932&hvqmt=e&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9183273&hvtargid=kwd-10573980&hydadcr=14453_2479342&mcid=4c22dcdee2bf3a71b0b832c5c4ba9c17&hvocijid=12191796738053687932--&hvexpln=nav&gad_source=1",
+      "userId": "usr_d77cd3f462d7",
+      "userEmail": "anmolbabbar877@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T09:05:00.081Z",
+      "_id": "sys_520d8c163672"
+    },
+    {
+      "action": "USER_REGISTERED",
+      "details": "New user registered: anmolbabbar877@gmail.com",
+      "userId": "usr_d77cd3f462d7",
+      "userEmail": "anmolbabbar877@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T08:40:25.023Z",
+      "_id": "sys_bd94ac905e41"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: testuser2026@gmail.com",
+      "userId": "usr_0917138f6ab6",
+      "userEmail": "testuser2026@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T08:36:49.679Z",
+      "_id": "sys_5bf571dbe4f2"
+    },
+    {
+      "action": "USER_REGISTERED",
+      "details": "New user registered: testuser2026@gmail.com",
+      "userId": "usr_0917138f6ab6",
+      "userEmail": "testuser2026@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T08:36:49.599Z",
+      "_id": "sys_1121cee405cb"
+    },
+    {
+      "action": "USER_LOGIN",
+      "details": "User signed in: samantarpita70@gmail.com",
+      "userId": "usr_admin_arpita_01",
+      "userEmail": "samantarpita70@gmail.com",
+      "ip": "::1",
+      "timestamp": "2026-10-19T08:36:49.524Z",
+      "_id": "sys_9624cf6273d5"
+    },
+    {
+      "action": "USER_REGISTERED",
+      "details": "New user registered: bobsmith77@gmail.com",
+      "userId": "usr_fbb0adc95e15",
+      "userEmail": "bobsmith77@gmail.com",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-19T08:29:52.228Z",
+      "_id": "sys_69c710a90e9a"
+    },
+    {
+      "_id": "sys_1",
+      "action": "SYSTEM_BOOT",
+      "details": "LinkPulse initialized with single Admin: samantarpita70@gmail.com",
+      "ip": "127.0.0.1",
+      "timestamp": "2026-10-19T08:00:00.000Z"
+    }
+  ]
+}

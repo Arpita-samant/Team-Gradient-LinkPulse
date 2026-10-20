@@ -8,8 +8,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const isVercel = Boolean(process.env.VERCEL);
 const DATA_DIR = isVercel ? '/tmp' : path.resolve(__dirname, '../../data');
-const BUNDLED_STORE_FILE = path.resolve(__dirname, '../../data/store.json');
-const STORE_FILE = isVercel ? path.join('/tmp', 'store.json') : BUNDLED_STORE_FILE;
+const DATA_JSON_FILE = isVercel ? path.join('/tmp', 'data.json') : path.resolve(__dirname, '../../data/data.json');
+const BACKEND_DATA_JSON_FILE = path.resolve(__dirname, '../../data.json');
+const ROOT_DATA_JSON_FILE = path.resolve(__dirname, '../../../data.json');
+const LEGACY_STORE_FILE = isVercel ? path.join('/tmp', 'store.json') : path.resolve(__dirname, '../../data/store.json');
 
 // Mongoose Schemas for MongoDB Atlas
 const UserSchema = new mongoose.Schema({
@@ -78,7 +80,7 @@ export const MongooseModels = {
   SystemLog: mongoose.model('SystemLog', SystemLogSchema)
 };
 
-// Persistent fallback store for instant zero-dependency execution
+// High-fidelity file-backed store (persists to data.json)
 class MemoryFileStore {
   constructor() {
     this.data = {
@@ -91,6 +93,21 @@ class MemoryFileStore {
     this.init();
   }
 
+  getTargetFiles() {
+    if (isVercel) {
+      return [
+        path.join('/tmp', 'data.json'),
+        path.join('/tmp', 'store.json')
+      ];
+    }
+    return [
+      DATA_JSON_FILE,
+      BACKEND_DATA_JSON_FILE,
+      ROOT_DATA_JSON_FILE,
+      LEGACY_STORE_FILE
+    ];
+  }
+
   init() {
     try {
       if (!fs.existsSync(DATA_DIR)) {
@@ -100,31 +117,82 @@ class MemoryFileStore {
       console.warn('[DB] Could not ensure DATA_DIR:', e.message);
     }
 
-    if (isVercel && !fs.existsSync(STORE_FILE) && fs.existsSync(BUNDLED_STORE_FILE)) {
-      try {
-        fs.copyFileSync(BUNDLED_STORE_FILE, STORE_FILE);
-      } catch (e) {
-        console.warn('[DB] Could not copy bundled store to /tmp:', e.message);
+    const candidateFiles = isVercel
+      ? [path.join('/tmp', 'data.json'), path.join('/tmp', 'store.json'), LEGACY_STORE_FILE, DATA_JSON_FILE]
+      : [DATA_JSON_FILE, BACKEND_DATA_JSON_FILE, ROOT_DATA_JSON_FILE, LEGACY_STORE_FILE];
+
+    let loaded = false;
+    for (const f of candidateFiles) {
+      if (fs.existsSync(f)) {
+        try {
+          const raw = fs.readFileSync(f, 'utf-8');
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.users) && parsed.users.length > 0) {
+            this.data = parsed;
+            loaded = true;
+            console.log(`[DB] Loaded persistent data from ${path.basename(f)} (${this.data.users.length} users, ${this.data.links?.length || 0} links)`);
+            break;
+          }
+        } catch (e) {
+          console.warn(`[DB] Failed reading candidate ${f}:`, e.message);
+        }
       }
     }
-    if (fs.existsSync(STORE_FILE)) {
-      try {
-        const raw = fs.readFileSync(STORE_FILE, 'utf-8');
-        this.data = JSON.parse(raw);
-      } catch (err) {
-        console.warn('Could not read existing store.json, re-initializing seed data.', err.message);
-        this.seedInitialData();
-      }
-    } else {
+
+    if (!loaded) {
       this.seedInitialData();
+    } else {
+      this.ensureAdmin();
+      this.save();
+    }
+  }
+
+  ensureAdmin() {
+    if (!this.data.users) this.data.users = [];
+    const hasAdmin = this.data.users.some(u => u.email === 'samantarpita70@gmail.com');
+    if (!hasAdmin) {
+      const adminHash = bcrypt.hashSync('arpitasamant12', 10);
+      this.data.users.unshift({
+        _id: 'usr_admin_arpita_01',
+        name: 'Arpita Samant',
+        email: 'samantarpita70@gmail.com',
+        password: adminHash,
+        role: 'admin',
+        status: 'active',
+        createdAt: new Date().toISOString()
+      });
+    }
+  }
+
+  reload() {
+    const candidateFiles = this.getTargetFiles();
+    for (const f of candidateFiles) {
+      if (fs.existsSync(f)) {
+        try {
+          const raw = fs.readFileSync(f, 'utf-8');
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.users)) {
+            this.data = parsed;
+            return;
+          }
+        } catch (e) {}
+      }
     }
   }
 
   save() {
-    try {
-      fs.writeFileSync(STORE_FILE, JSON.stringify(this.data, null, 2), 'utf-8');
-    } catch (err) {
-      console.error('Failed to save store.json:', err.message);
+    this.ensureAdmin();
+    const jsonStr = JSON.stringify(this.data, null, 2);
+    const targetFiles = this.getTargetFiles();
+
+    for (const file of targetFiles) {
+      try {
+        const dir = path.dirname(file);
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true });
+        }
+        fs.writeFileSync(file, jsonStr, 'utf-8');
+      } catch (err) {}
     }
   }
 
@@ -162,6 +230,7 @@ export const memoryStore = new MemoryFileStore();
 
 let cachedPromise = null;
 let isMongoConnected = false;
+let lastMongoFailTime = 0;
 
 export async function seedMongoAdmin() {
   if (!isMongoDBActive()) return;
@@ -195,9 +264,14 @@ export async function connectDB() {
     return null;
   }
 
+  // If connection failed recently, avoid stalling user requests with repeated 3-sec timeouts
+  if (Date.now() - lastMongoFailTime < 60000) {
+    return null;
+  }
+
   if (!cachedPromise) {
     cachedPromise = mongoose.connect(mongoURI, {
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 3000,
       autoIndex: false,
       maxPoolSize: 10
     }).then(async (m) => {
@@ -208,7 +282,8 @@ export async function connectDB() {
     }).catch(err => {
       cachedPromise = null;
       isMongoConnected = false;
-      console.warn(`[DB] MongoDB Atlas connection error: ${err.message}.`);
+      lastMongoFailTime = Date.now();
+      console.warn(`[DB] MongoDB Atlas connection error: ${err.message}. Serving from data.json.`);
       return null;
     });
   }
