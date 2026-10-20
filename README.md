@@ -181,4 +181,11 @@ Once both the backend and frontend are running, open the frontend URL in your br
 - **Frontend cannot connect to backend:** Check that the backend is running and the frontend API configuration uses the correct backend URL.
 
 ## 🎥 Project Demo
->>>>>>> 0a71451 (updated)
+
+https://github.com/user-attachments/assets/ff94aabe-64a8-4b5a-96bf-aca8bb0aa2b2
+
+
+
+
+
+
