@@ -80,13 +80,15 @@ app.get('/:shortCode', (req, res, next) => {
   handleRedirect(req, res);
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`===============================================`);
-  console.log(`[LinkPulse] Server running on http://localhost:${PORT}`);
-  console.log(`[LinkPulse] Mode: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`[LinkPulse] Short URL base: ${process.env.BASE_URL || `http://localhost:${PORT}`}`);
-  console.log(`===============================================`);
-});
+// Start Server (skip listening when deployed as a serverless function on Vercel)
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`===============================================`);
+    console.log(`[LinkPulse] Server running on http://localhost:${PORT}`);
+    console.log(`[LinkPulse] Mode: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`[LinkPulse] Short URL base: ${process.env.BASE_URL || `http://localhost:${PORT}`}`);
+    console.log(`===============================================`);
+  });
+}
 
 export default app;
