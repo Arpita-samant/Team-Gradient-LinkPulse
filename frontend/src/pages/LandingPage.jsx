@@ -75,11 +75,13 @@ export default function LandingPage() {
           {/* Logo with 🔗 emoji */}
           <Link
             to="/"
-            className="flex items-center gap-2 text-left focus-visible:outline-2 shrink-0 cursor-pointer"
+            className="flex items-center gap-2 text-left focus-visible:outline-2 shrink-0 cursor-pointer group"
             title="Link Pulse Home"
           >
-            <span className="w-7 h-7 rounded-lg bg-[var(--surface)] border border-[var(--line)] flex items-center justify-center shrink-0 text-sm">🔗</span>
-            <span className="font-ndot text-xs tracking-wider text-[var(--fg)] whitespace-nowrap">
+            <span className="w-7 h-7 rounded-lg bg-[var(--surface)] border border-[var(--line)] flex items-center justify-center shrink-0 text-[var(--accent)] group-hover:border-[var(--accent)] transition-colors">
+              <Link2 className="w-4 h-4" />
+            </span>
+            <span className="font-ndot text-xs tracking-wider text-[var(--fg)] group-hover:text-[var(--accent)] whitespace-nowrap transition-colors">
               Link Pulse <span className="text-[var(--accent)]">//</span>
             </span>
           </Link>

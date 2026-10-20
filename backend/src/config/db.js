@@ -6,8 +6,10 @@ import bcrypt from 'bcryptjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const DATA_DIR = path.resolve(__dirname, '../../data');
-const STORE_FILE = path.join(DATA_DIR, 'store.json');
+const isVercel = Boolean(process.env.VERCEL);
+const DATA_DIR = isVercel ? '/tmp' : path.resolve(__dirname, '../../data');
+const BUNDLED_STORE_FILE = path.resolve(__dirname, '../../data/store.json');
+const STORE_FILE = isVercel ? path.join('/tmp', 'store.json') : BUNDLED_STORE_FILE;
 
 // Mongoose Schemas for MongoDB Atlas
 const UserSchema = new mongoose.Schema({
@@ -90,8 +92,20 @@ class MemoryFileStore {
   }
 
   init() {
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
+    try {
+      if (!fs.existsSync(DATA_DIR)) {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+      }
+    } catch (e) {
+      console.warn('[DB] Could not ensure DATA_DIR:', e.message);
+    }
+
+    if (isVercel && !fs.existsSync(STORE_FILE) && fs.existsSync(BUNDLED_STORE_FILE)) {
+      try {
+        fs.copyFileSync(BUNDLED_STORE_FILE, STORE_FILE);
+      } catch (e) {
+        console.warn('[DB] Could not copy bundled store to /tmp:', e.message);
+      }
     }
     if (fs.existsSync(STORE_FILE)) {
       try {

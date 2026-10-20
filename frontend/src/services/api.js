@@ -18,7 +18,12 @@ export async function apiRequest(endpoint, options = {}) {
       headers
     });
   } catch (netErr) {
-    throw new Error('Cannot connect to the backend server. Please make sure the backend is running on http://localhost:5000.');
+    const isDev = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    throw new Error(
+      isDev
+        ? 'Cannot connect to the backend server. Please make sure the backend is running on http://localhost:5000.'
+        : 'Cannot connect to the LinkPulse backend service. Please try again in a moment.'
+    );
   }
 
   const data = await response.json().catch(() => ({}));
@@ -28,7 +33,12 @@ export async function apiRequest(endpoint, options = {}) {
       throw new Error(data.message);
     }
     if (response.status === 500) {
-      throw new Error('Backend server is not running or encountered an error. Please make sure the backend is started on http://localhost:5000.');
+      const isDev = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+      throw new Error(
+        isDev
+          ? 'Backend server is not running or encountered an error. Please make sure the backend is started on http://localhost:5000.'
+          : 'Backend service returned a 500 server error. Please check the backend logs on Vercel.'
+      );
     }
     throw new Error(`Request failed with status ${response.status}`);
   }
