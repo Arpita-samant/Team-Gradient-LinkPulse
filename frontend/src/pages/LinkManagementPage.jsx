@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link as RouterLink, useOutletContext } from 'react-router-dom';
+import { Link as RouterLink, useOutletContext, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { linkAPI } from '../services/api';
 import {
   FolderKanban,
@@ -31,6 +32,8 @@ import {
 } from 'lucide-react';
 
 export default function LinkManagementPage() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { globalSearch } = useOutletContext() || {};
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -84,6 +87,13 @@ export default function LinkManagementPage() {
   }, [search, statusFilter, tagFilter, page]);
 
   const fetchLinks = async () => {
+    if (!user) {
+      setLinks([]);
+      setTotalPages(1);
+      setTotalLinks(0);
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const params = {
@@ -279,6 +289,21 @@ export default function LinkManagementPage() {
             <span>Create New Link</span>
           </RouterLink>
         </div>
+
+        {!user && (
+          <div className="p-3.5 rounded-xl border border-[var(--line)] bg-[var(--surface-subtle)] text-xs font-mono flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-[var(--fg2)]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] led-dot shrink-0" />
+              <span>GUEST MODE // Sign up or log in to track, edit, and organize your shortened links.</span>
+            </div>
+            <button
+              onClick={() => navigate('/signup')}
+              className="btn btn-solid btn-sm whitespace-nowrap cursor-pointer self-start sm:self-auto"
+            >
+              Sign Up Free
+            </button>
+          </div>
+        )}
 
         {/* Filter Toolbar */}
         <div className="flex flex-wrap items-center gap-3">

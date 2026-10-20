@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   Link2,
@@ -27,6 +27,11 @@ export default function LoginPage() {
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const getTargetDestination = () => {
+    return location.state?.from || (sessionStorage.getItem('pendingLinkData') ? '/create-link' : '/analytics');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +39,7 @@ export default function LoginPage() {
       setLoading(true);
       setError(null);
       await login(email.trim(), password);
-      navigate('/analytics');
+      navigate(getTargetDestination());
     } catch (err) {
       setError(err.message || 'Invalid email or password.');
     } finally {
@@ -47,7 +52,7 @@ export default function LoginPage() {
       setLoading(true);
       setError(null);
       await login('samantarpita70@gmail.com', 'arpitasamant12');
-      navigate('/analytics');
+      navigate(getTargetDestination());
     } catch (err) {
       setError(err.message);
     } finally {

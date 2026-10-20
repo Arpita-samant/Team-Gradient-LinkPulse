@@ -44,33 +44,12 @@ export default function App() {
             {/* Public Landing Page */}
             <Route path="/" element={<LandingPage />} />
 
-            {/* Dashboard Layout Views */}
+            {/* Dashboard Layout Views (Publicly navigable, Admin restricted) */}
             <Route element={<DashboardLayout />}>
-              <Route
-                path="/create-link"
-                element={
-                  <ProtectedRoute>
-                    <CreateLinkPage />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/create-link" element={<CreateLinkPage />} />
               <Route path="/qr-generator" element={<QrGeneratorPage />} />
-              <Route
-                path="/links"
-                element={
-                  <ProtectedRoute>
-                    <LinkManagementPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/analytics"
-                element={
-                  <ProtectedRoute>
-                    <AnalyticsDashboardPage />
-                  </ProtectedRoute>
-                }
-              />
+              <Route path="/links" element={<LinkManagementPage />} />
+              <Route path="/analytics" element={<AnalyticsDashboardPage />} />
               <Route
                 path="/admin"
                 element={

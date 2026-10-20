@@ -34,7 +34,7 @@
 
 **QR Code Generation:** Generate custom QR codes for any link, download as PNG, or share instantly.
 
-**Link Management Dashboard:** Filter and search saved links by tags, view total clicks, creation dates, and statuses.
+**Link Management Dashboard:** Filter and search saved links by tags, view total clicks, creation dates, expiry date, status and actions.
 
 **Advanced Analytics Dashboard:** Track total links, clicks, QR codes, scan metrics, and view real-time click trend graphs powered by Recharts alongside device detection breakdown.
 
@@ -77,4 +77,108 @@
 **Version Control:** Git & GitHub
 
 
+<<<<<<< HEAD
 
+=======
+## 🚀 Setup Instructions
+
+Follow these steps to run LinkPulse locally on your machine.
+
+### Prerequisites
+
+Make sure you have the following installed:
+
+- [Node.js](https://nodejs.org/)
+- npm (included with Node.js)
+- [Git](https://git-scm.com/)
+- MongoDB Atlas account (optional if using the project's fallback storage)
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Arpita-samant/Team-Gradient-LinkPulse.git
+cd Team-Gradient-LinkPulse
+```
+
+### 2. Install Dependencies
+
+Install the root dependencies:
+
+```bash
+npm install
+```
+
+Install the backend dependencies:
+
+```bash
+cd backend
+npm install
+```
+
+Install the frontend dependencies in a separate terminal:
+
+```bash
+cd frontend
+npm install
+```
+
+### 3. Configure Environment Variables
+
+Create a `.env` file inside the `backend` directory and configure the required environment variables:
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+```
+
+Replace the placeholder values with your actual MongoDB connection string and a secure JWT secret.
+
+If your application supports fallback storage, MongoDB configuration may be optional for local testing. Data persistence depends on the storage implementation.
+
+**Security:** Never commit your `.env` file or expose your database credentials and secret keys publicly.
+
+### 4. Start the Backend
+
+Open a terminal in VS Code and run:
+
+```bash
+cd backend
+npm run dev
+```
+
+The backend runs on port `5000` by default.
+
+Keep this terminal running while using the application.
+
+### 5. Start the Frontend
+
+Open a second terminal in VS Code and run:
+
+```bash
+cd frontend
+npm run dev
+```
+
+Open the local URL displayed in the terminal, usually:
+
+```text
+http://localhost:5173
+```
+
+### 6. Access LinkPulse
+
+Once both the backend and frontend are running, open the frontend URL in your browser to use LinkPulse.
+
+- **Frontend:** `http://localhost:5173`
+- **Backend:** `http://localhost:5000`
+
+### Troubleshooting
+
+- **Port 5000 already in use:** Stop the existing backend process before restarting the server.
+- **Dependencies missing:** Run `npm install` inside the relevant project directory.
+- **MongoDB connection issue:** Verify your `MONGO_URI` in the backend `.env` file.
+- **Frontend cannot connect to backend:** Check that the backend is running and the frontend API configuration uses the correct backend URL.
+
+## 🎥 Project Demo
+>>>>>>> 0a71451 (updated)

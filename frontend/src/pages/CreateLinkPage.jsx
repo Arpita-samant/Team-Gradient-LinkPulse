@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { linkAPI } from '../services/api';
 import {
   Link2,
@@ -18,6 +20,9 @@ import {
 } from 'lucide-react';
 
 export default function CreateLinkPage() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     originalUrl: '',
     title: '',
@@ -33,6 +38,22 @@ export default function CreateLinkPage() {
   const [createdLink, setCreatedLink] = useState(null);
   const [copied, setCopied] = useState(false);
 
+  // Restore any pending link data if user just signed up/logged in
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('pendingLinkData');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          setFormData(prev => ({ ...prev, ...parsed }));
+        }
+        if (user) {
+          sessionStorage.removeItem('pendingLinkData');
+        }
+      }
+    } catch (e) {}
+  }, [user]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -43,6 +64,20 @@ export default function CreateLinkPage() {
     e.preventDefault();
     if (!formData.originalUrl.trim()) {
       setError('Please enter a long URL to shorten.');
+      return;
+    }
+
+    // Direct unauthenticated users to the signup form when creating link
+    if (!user) {
+      try {
+        sessionStorage.setItem('pendingLinkData', JSON.stringify(formData));
+      } catch (err) {}
+      navigate('/signup', {
+        state: {
+          message: 'Please create an account or sign in to generate and save your short link.',
+          from: '/create-link'
+        }
+      });
       return;
     }
 
@@ -97,6 +132,22 @@ export default function CreateLinkPage() {
           <h1 className="font-ndot text-2xl text-[var(--fg)]">Create Short Link</h1>
           <p className="text-xs text-[var(--fg2)] mt-1 font-mono">Turn long URLs into short, clean and shareable links.</p>
         </div>
+
+        {!user && (
+          <div className="p-3 rounded-xl border border-[var(--line)] bg-[var(--surface-subtle)] text-xs font-mono flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-[var(--fg2)]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] led-dot" />
+              <span>GUEST MODE // You will be directed to sign up to save your short link.</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate('/signup')}
+              className="font-ndot text-[10px] text-[var(--accent)] hover:underline whitespace-nowrap cursor-pointer"
+            >
+              SIGN UP &rarr;
+            </button>
+          </div>
+        )}
 
         {error && (
           <div className="p-3 rounded-xl border border-[var(--accent)] bg-[var(--accent-dim)] text-[var(--accent)] text-xs font-mono flex items-start gap-3">

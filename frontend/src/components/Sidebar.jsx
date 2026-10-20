@@ -15,6 +15,7 @@ export default function Sidebar({ isOpen, onClose }) {
   const { isAdmin } = useAuth();
 
   const navItems = [
+    { to: '/', label: 'Home', icon: Home, code: '00' },
     { to: '/analytics', label: 'Analytic Dashboard', icon: BarChart3, code: '01' },
     { to: '/create-link', label: 'Short Link Generator', icon: Link2, code: '02' },
     { to: '/qr-generator', label: 'QR Code Generator', icon: QrCode, code: '03' },
@@ -67,6 +68,7 @@ export default function Sidebar({ isOpen, onClose }) {
             <NavLink
               key={item.to}
               to={item.to}
+              end={item.to === '/'}
               onClick={() => {
                 if (onClose) onClose();
               }}

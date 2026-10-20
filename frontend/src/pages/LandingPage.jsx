@@ -178,7 +178,7 @@ export default function LandingPage() {
               {/* Prominent CTA Buttons */}
               <div className="flex flex-wrap items-center gap-4 pt-2">
                 <Link
-                  to={user ? "/create-link" : "/signup"}
+                  to="/create-link"
                   className="btn btn-solid px-6 py-3.5 cursor-pointer text-xs flex items-center gap-2"
                 >
                   <span>{user ? "Create a Short Link" : "Get Started Free"}</span>
@@ -186,10 +186,10 @@ export default function LandingPage() {
                 </Link>
 
                 <Link
-                  to={user ? "/analytics" : "/login"}
+                  to="/analytics"
                   className="btn btn-line px-6 py-3.5 cursor-pointer text-xs"
                 >
-                  <span>{user ? "View Dashboard" : "Login"}</span>
+                  <span>{user ? "View Dashboard" : "Explore Dashboard"}</span>
                 </Link>
               </div>
 

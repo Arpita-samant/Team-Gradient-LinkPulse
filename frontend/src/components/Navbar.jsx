@@ -76,8 +76,8 @@ export default function Navbar({ onToggleSidebar }) {
             )}
           </button>
 
-          {/* User Profile Dropdown */}
-          {user && (
+          {/* User Profile Dropdown / Guest Auth CTA */}
+          {user ? (
             <div className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -113,6 +113,21 @@ export default function Navbar({ onToggleSidebar }) {
                   </div>
                 </div>
               )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 font-mono text-xs">
+              <Link
+                to="/login"
+                className="px-3 py-1.5 rounded-sm border border-[var(--line)] bg-[var(--surface-subtle)] text-[var(--fg)] hover:border-[var(--fg-muted)] hover:bg-[var(--surface-hover)] transition-all cursor-pointer text-xs uppercase tracking-wider"
+              >
+                Log In
+              </Link>
+              <Link
+                to="/signup"
+                className="px-3 py-1.5 rounded-sm border border-transparent bg-[var(--fg)] text-[var(--bg)] hover:opacity-90 transition-all cursor-pointer font-bold text-xs uppercase tracking-wider"
+              >
+                Sign Up
+              </Link>
             </div>
           )}
         </div>

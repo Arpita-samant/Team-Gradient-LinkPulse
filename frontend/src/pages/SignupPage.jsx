@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   Link2,
@@ -25,6 +25,9 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const noticeMessage = location.state?.message;
 
   // Password Strength Calculation (0 to 4)
   const calculateStrength = (pwd) => {
@@ -64,7 +67,8 @@ export default function SignupPage() {
     try {
       setLoading(true);
       await register(name.trim(), trimmedEmail, password);
-      navigate('/analytics');
+      const destination = location.state?.from || (sessionStorage.getItem('pendingLinkData') ? '/create-link' : '/analytics');
+      navigate(destination);
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.');
     } finally {
@@ -121,6 +125,13 @@ export default function SignupPage() {
             </Link>
           </div>
         </div>
+
+        {noticeMessage && !error && (
+          <div className="p-3 rounded-xl border border-[var(--line)] bg-[var(--surface-subtle)] text-[var(--fg)] text-xs flex items-center gap-2.5 font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] led-dot shrink-0" />
+            <span>{noticeMessage}</span>
+          </div>
+        )}
 
         {error && (
           <div className="p-3 rounded-xl border border-[var(--accent)] bg-[var(--accent-dim)] text-[var(--accent)] text-xs flex items-center gap-2.5 font-mono">

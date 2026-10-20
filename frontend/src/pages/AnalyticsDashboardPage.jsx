@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { analyticsAPI } from '../services/api';
 import {
@@ -28,17 +28,23 @@ import {
 
 export default function AnalyticsDashboardPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [range, setRange] = useState('7d');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const firstName = user?.name ? user.name.split(' ')[0] : 'Member';
+  const firstName = user?.name ? user.name.split(' ')[0] : 'Guest';
 
   useEffect(() => {
     fetchAnalytics(range);
-  }, [range]);
+  }, [range, user]);
 
   const fetchAnalytics = async (selectedRange) => {
+    if (!user) {
+      setData(null);
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const res = await analyticsAPI.getDashboard(selectedRange);
@@ -82,10 +88,10 @@ export default function AnalyticsDashboardPage() {
             </span>
           </div>
           <h1 className="font-ndot text-2xl sm:text-3xl text-[var(--fg)]">
-            Good Morning, {firstName}!
+            {user ? `Good Morning, ${firstName}!` : 'Analytic Dashboard'}
           </h1>
           <p className="text-xs text-[var(--fg2)] font-mono">
-            Here's what's happening with your links today.
+            {user ? "Here's what's happening with your links today." : "Real-time link click trends, device metrics, and telemetry."}
           </p>
         </div>
 
@@ -95,6 +101,21 @@ export default function AnalyticsDashboardPage() {
           <span>WINDOW: {range === '30d' ? '30 DAYS' : '7 DAYS'}</span>
         </div>
       </div>
+
+      {!user && (
+        <div className="p-4 rounded-xl border border-[var(--line)] bg-[var(--surface-subtle)] text-xs font-mono flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-[var(--fg2)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] led-dot shrink-0" />
+            <span>GUEST MODE // Sign up or log in to track live clicks, geographic telemetry, and performance insights.</span>
+          </div>
+          <button
+            onClick={() => navigate('/signup')}
+            className="btn btn-solid btn-sm whitespace-nowrap cursor-pointer self-start sm:self-auto"
+          >
+            Sign Up Free
+          </button>
+        </div>
+      )}
 
       {/* 4 KPI Metric Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
