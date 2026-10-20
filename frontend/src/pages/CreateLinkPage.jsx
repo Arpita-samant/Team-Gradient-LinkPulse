@@ -55,7 +55,9 @@ export default function CreateLinkPage() {
   }, [user]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    if (name === 'linkCustomAlias') name = 'customAlias';
+    if (name === 'linkAccessPassword') name = 'password';
     setFormData(prev => ({ ...prev, [name]: value }));
     if (error) setError(null);
   };
@@ -159,7 +161,10 @@ export default function CreateLinkPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
+          {/* Prevent browser autofill from dumping saved email & password into alias/protection inputs */}
+          <input type="text" name="fake_username_trap" style={{ display: 'none' }} tabIndex={-1} autoComplete="username" />
+          <input type="password" name="fake_password_trap" style={{ display: 'none' }} tabIndex={-1} autoComplete="current-password" />
           {/* Long URL */}
           <div>
             <label htmlFor="long-url" className="block font-ndot text-[11px] text-[var(--fg)] mb-1.5">
@@ -201,7 +206,12 @@ export default function CreateLinkPage() {
             <input
               id="custom-alias"
               type="text"
-              name="customAlias"
+              name="linkCustomAlias"
+              autoComplete="off"
+              autoCorrect="off"
+              spellCheck="false"
+              data-lpignore="true"
+              data-form-type="other"
               value={formData.customAlias}
               onChange={handleChange}
               placeholder="yourname"
@@ -218,10 +228,13 @@ export default function CreateLinkPage() {
               <input
                 id="pwd-prot"
                 type={showPassword ? 'text' : 'password'}
-                name="password"
+                name="linkAccessPassword"
+                autoComplete="new-password"
+                data-lpignore="true"
+                data-form-type="other"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Add password"
+                placeholder="Passphrase to protect link (optional)"
                 className="input pr-11"
               />
               <button

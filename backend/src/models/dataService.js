@@ -117,7 +117,7 @@ export const LinkService = {
 
     let results = memoryStore.data.links.filter(l => {
       for (const [k, v] of Object.entries(query)) {
-        if (k === 'userId' && l.userId !== v) return false;
+        if (k === 'userId' && String(l.userId) !== String(v)) return false;
         if (k === 'status' && l.status !== v) return false;
         if (k === 'isSuspicious' && l.isSuspicious !== v) return false;
         if (k === '$or') {
@@ -154,13 +154,17 @@ export const LinkService = {
   },
 
   async create(linkData) {
+    const cleanLink = {
+      ...linkData,
+      userId: String(linkData.userId || 'usr_anonymous')
+    };
     if (isMongoDBActive()) {
-      const created = await MongooseModels.Link.create(linkData);
+      const created = await MongooseModels.Link.create(cleanLink);
       return created.toObject();
     }
     const newLink = {
       _id: `lnk_${idGen()}`,
-      ...linkData,
+      ...cleanLink,
       clicks: 0,
       qrScans: 0,
       createdAt: new Date().toISOString(),
@@ -227,12 +231,16 @@ export const LinkService = {
 
 export const ClickLogService = {
   async create(logData) {
+    const cleanLog = {
+      ...logData,
+      userId: String(logData.userId || '')
+    };
     if (isMongoDBActive()) {
-      return await MongooseModels.ClickLog.create(logData);
+      return await MongooseModels.ClickLog.create(cleanLog);
     }
     const log = {
       _id: `log_${idGen()}`,
-      ...logData,
+      ...cleanLog,
       timestamp: new Date().toISOString()
     };
     memoryStore.data.clickLogs.push(log);
@@ -246,6 +254,7 @@ export const ClickLogService = {
     }
     return memoryStore.data.clickLogs.filter(cl => {
       for (const [k, v] of Object.entries(query)) {
+        if (k === 'userId' && String(cl.userId) !== String(v)) return false;
         if (cl[k] !== v) return false;
       }
       return true;
@@ -258,6 +267,7 @@ export const ClickLogService = {
     }
     return memoryStore.data.clickLogs.filter(cl => {
       for (const [k, v] of Object.entries(query)) {
+        if (k === 'userId' && String(cl.userId) !== String(v)) return false;
         if (cl[k] !== v) return false;
       }
       return true;

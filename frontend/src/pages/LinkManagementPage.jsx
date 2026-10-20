@@ -28,7 +28,8 @@ import {
   Link2,
   RefreshCw,
   Sparkles,
-  ShieldAlert
+  ShieldAlert,
+  Share2
 } from 'lucide-react';
 
 export default function LinkManagementPage() {
@@ -140,6 +141,38 @@ export default function LinkManagementPage() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+  };
+
+  const handleShareQR = async (link) => {
+    if (!link) return;
+    if (navigator.share) {
+      try {
+        if (link.qrCodeDataUrl && navigator.canShare) {
+          try {
+            const res = await fetch(link.qrCodeDataUrl);
+            const blob = await res.blob();
+            const file = new File([blob], `linkpulse-qr-${link.shortCode}.png`, { type: 'image/png' });
+            if (navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                title: `QR Code: ${link.title || link.shortCode}`,
+                text: `Scan QR code for: ${link.shortUrl}`,
+                files: [file]
+              });
+              return;
+            }
+          } catch {}
+        }
+        await navigator.share({
+          title: `QR Code: ${link.title || link.shortCode}`,
+          text: `Scan QR code for: ${link.shortUrl}`,
+          url: link.shortUrl
+        });
+        return;
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+    handleCopy(link.shortUrl, 'qr-modal');
   };
 
   const handleToggleStatus = async (id) => {
@@ -724,7 +757,7 @@ export default function LinkManagementPage() {
               </button>
             </div>
 
-            <form onSubmit={handleSavePassword} className="space-y-4 text-xs font-mono">
+            <form onSubmit={handleSavePassword} className="space-y-4 text-xs font-mono" autoComplete="off">
               <p className="text-zinc-600 dark:text-zinc-400">
                 Impose authentication before target redirection occurs.
               </p>
@@ -735,6 +768,9 @@ export default function LinkManagementPage() {
                 </label>
                 <input
                   type="password"
+                  name="linkNewSecretPassphrase"
+                  autoComplete="new-password"
+                  data-lpignore="true"
                   value={newPassword}
                   onChange={(e) => {
                     setNewPassword(e.target.value);
@@ -907,6 +943,15 @@ export default function LinkManagementPage() {
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>DOWNLOAD</span>
+              </button>
+
+              <button
+                onClick={() => handleShareQR(qrModalLink)}
+                className="btn-line py-2 px-3 text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer"
+                title="Share QR Code"
+              >
+                <Share2 className="w-3.5 h-3.5" />
+                <span>SHARE</span>
               </button>
 
               <button

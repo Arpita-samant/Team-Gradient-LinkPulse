@@ -19,14 +19,14 @@ export async function getAdminMetrics(req, res) {
     return res.json({
       success: true,
       stats: {
-        totalUsers: totalUsers || 48,
-        usersGrowth: '+10%',
-        totalLinks: totalLinks || 1248,
-        linksGrowth: '+12%',
-        totalQRCodes: totalQR || 356,
-        qrGrowth: '+9%',
-        suspiciousLinks: suspiciousLinks || 3,
-        suspiciousGrowth: '50%'
+        totalUsers: totalUsers ?? 0,
+        usersGrowth: totalUsers > 0 ? '+10%' : '0%',
+        totalLinks: totalLinks ?? 0,
+        linksGrowth: totalLinks > 0 ? '+12%' : '0%',
+        totalQRCodes: totalQR ?? 0,
+        qrGrowth: totalQR > 0 ? '+9%' : '0%',
+        suspiciousLinks: suspiciousLinks ?? 0,
+        suspiciousGrowth: suspiciousLinks > 0 ? '50%' : '0%'
       }
     });
   } catch (err) {
@@ -38,18 +38,37 @@ export async function getAllUsers(req, res) {
   try {
     const { search } = req.query;
     let users = await UserService.find();
+    const allLinks = await LinkService.find();
 
     if (search && search.trim()) {
       const q = search.trim().toLowerCase();
       users = users.filter(u =>
-        u.name.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q)
+        (u.name && u.name.toLowerCase().includes(q)) ||
+        (u.email && u.email.toLowerCase().includes(q))
       );
     }
 
+    // Enrich users with their real total links and clicks metrics
+    const enrichedUsers = users.map(u => {
+      const userLinks = allLinks.filter(l => String(l.userId) === String(u._id));
+      const totalClicks = userLinks.reduce((sum, l) => sum + (l.clicks || 0), 0);
+      const totalQR = userLinks.filter(l => l.qrCodeDataUrl || l.qrScans > 0).length;
+      return {
+        _id: u._id,
+        name: u.name,
+        email: u.email,
+        role: u.role || 'user',
+        status: u.status || 'active',
+        totalLinks: userLinks.length,
+        totalClicks,
+        totalQR,
+        createdAt: u.createdAt || new Date().toISOString()
+      };
+    });
+
     return res.json({
       success: true,
-      users
+      users: enrichedUsers
     });
   } catch (err) {
     return res.status(500).json({ success: false, message: 'Failed to retrieve users.' });

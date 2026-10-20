@@ -7,7 +7,11 @@ import {
   Sparkles,
   Link2,
   CheckCircle2,
-  Copy
+  Copy,
+  MessageCircle,
+  Twitter,
+  Image as ImageIcon,
+  X
 } from 'lucide-react';
 
 export default function QrGeneratorPage() {
@@ -17,6 +21,8 @@ export default function QrGeneratorPage() {
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [shareNotice, setShareNotice] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareFeedback, setShareFeedback] = useState(null);
 
   // Generate initial QR code on mount
   useEffect(() => {
@@ -77,22 +83,74 @@ export default function QrGeneratorPage() {
     document.body.removeChild(a);
   };
 
+  const notifyFeedback = (msg) => {
+    setShareFeedback(msg);
+    setTimeout(() => setShareFeedback(null), 3000);
+  };
+
+  const copyQrText = () => {
+    navigator.clipboard.writeText(inputText);
+    notifyFeedback('LINK COPIED TO CLIPBOARD');
+  };
+
+  const copyQrImage = async () => {
+    if (!qrDataUrl) return;
+    try {
+      const res = await fetch(qrDataUrl);
+      const blob = await res.blob();
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'image/png': blob })
+      ]);
+      notifyFeedback('QR IMAGE COPIED TO CLIPBOARD');
+    } catch (e) {
+      copyQrText();
+    }
+  };
+
+  const shareToWhatsapp = () => {
+    const text = `Scan my QR code on LinkPulse: ${inputText}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+    notifyFeedback('OPENING WHATSAPP...');
+  };
+
+  const shareToTwitter = () => {
+    const text = `Scan my LinkPulse QR code: ${inputText}`;
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+    notifyFeedback('OPENING X (TWITTER)...');
+  };
+
   const handleShare = async () => {
     if (navigator.share) {
       try {
+        if (qrDataUrl && navigator.canShare) {
+          try {
+            const res = await fetch(qrDataUrl);
+            const blob = await res.blob();
+            const file = new File([blob], 'linkpulse-qr.png', { type: 'image/png' });
+            if (navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                title: 'LinkPulse QR Code',
+                text: `Scan QR code for: ${inputText}`,
+                files: [file]
+              });
+              notifyFeedback('SHARED SUCCESSFULLY');
+              return;
+            }
+          } catch {}
+        }
         await navigator.share({
           title: 'LinkPulse QR Code',
           text: `Scan QR code for: ${inputText}`,
-          url: inputText
+          url: (inputText.startsWith('http://') || inputText.startsWith('https://')) ? inputText : undefined
         });
-      } catch (e) {
-        // user cancelled or unsupported
+        notifyFeedback('SHARED SUCCESSFULLY');
+        return;
+      } catch (err) {
+        if (err.name === 'AbortError') return;
       }
-    } else {
-      navigator.clipboard.writeText(inputText);
-      setShareNotice(true);
-      setTimeout(() => setShareNotice(false), 2500);
     }
+    // Open share modal with copy & social options
+    setShareModalOpen(true);
   };
 
   return (
@@ -216,13 +274,101 @@ export default function QrGeneratorPage() {
                   <span>Share</span>
                 </button>
               </div>
-              {shareNotice && (
-                <p className="font-ndot text-[10px] text-[var(--accent)] mt-2">LINK COPIED TO CLIPBOARD</p>
+              {shareFeedback && (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 mt-2.5 rounded-sm border border-[var(--accent)] bg-[var(--surface-subtle)] text-[var(--accent)] font-ndot text-[10px] animate-in fade-in">
+                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                  <span>{shareFeedback}</span>
+                </div>
               )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Interactive QR Share Modal */}
+      {shareModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="panel max-w-sm w-full p-6 space-y-5 rounded-xl border border-[var(--line)] bg-[var(--surface)] shadow-2xl relative">
+            <span aria-hidden="true" className="pointer-events-none select-none absolute -top-2 -left-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
+            <span aria-hidden="true" className="pointer-events-none select-none absolute -top-2 -right-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
+            <span aria-hidden="true" className="pointer-events-none select-none absolute -bottom-2 -left-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
+            <span aria-hidden="true" className="pointer-events-none select-none absolute -bottom-2 -right-1.5 font-mono text-xs leading-none text-[var(--fg)]">+</span>
+
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[var(--accent)] led-dot" />
+                <h3 className="font-ndot text-sm uppercase text-[var(--fg)]">SHARE // QR MATRIX</h3>
+              </div>
+              <button
+                onClick={() => setShareModalOpen(false)}
+                className="p-1 text-[var(--fg3)] hover:text-[var(--fg)] transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-2 font-mono text-xs">
+              <button
+                type="button"
+                onClick={() => { copyQrText(); setShareModalOpen(false); }}
+                className="w-full p-2.5 rounded-sm border border-[var(--line)] hover:border-[var(--accent)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-hover)] flex items-center justify-between transition-colors cursor-pointer text-left text-[var(--fg)]"
+              >
+                <span className="flex items-center gap-2">
+                  <Link2 className="w-4 h-4 text-[var(--accent)]" />
+                  <span>Copy Target Link</span>
+                </span>
+                <Copy className="w-3.5 h-3.5 text-[var(--fg-muted)]" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { copyQrImage(); setShareModalOpen(false); }}
+                className="w-full p-2.5 rounded-sm border border-[var(--line)] hover:border-[var(--accent)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-hover)] flex items-center justify-between transition-colors cursor-pointer text-left text-[var(--fg)]"
+              >
+                <span className="flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-[var(--accent)]" />
+                  <span>Copy QR Image</span>
+                </span>
+                <Copy className="w-3.5 h-3.5 text-[var(--fg-muted)]" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { shareToWhatsapp(); setShareModalOpen(false); }}
+                className="w-full p-2.5 rounded-sm border border-[var(--line)] hover:border-[var(--accent)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-hover)] flex items-center justify-between transition-colors cursor-pointer text-left text-[var(--fg)]"
+              >
+                <span className="flex items-center gap-2">
+                  <MessageCircle className="w-4 h-4 text-[var(--accent)]" />
+                  <span>Share on WhatsApp</span>
+                </span>
+                <span className="text-[10px] text-[var(--fg3)] font-ndot">SEND</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { shareToTwitter(); setShareModalOpen(false); }}
+                className="w-full p-2.5 rounded-sm border border-[var(--line)] hover:border-[var(--accent)] bg-[var(--surface-subtle)] hover:bg-[var(--surface-hover)] flex items-center justify-between transition-colors cursor-pointer text-left text-[var(--fg)]"
+              >
+                <span className="flex items-center gap-2">
+                  <Twitter className="w-4 h-4 text-[var(--accent)]" />
+                  <span>Share on X (Twitter)</span>
+                </span>
+                <span className="text-[10px] text-[var(--fg3)] font-ndot">POST</span>
+              </button>
+            </div>
+
+            <div className="pt-2 border-t border-[var(--line)]">
+              <button
+                type="button"
+                onClick={() => setShareModalOpen(false)}
+                className="btn btn-line w-full py-2 text-xs uppercase tracking-wider cursor-pointer font-ndot"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

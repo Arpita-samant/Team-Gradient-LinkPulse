@@ -3,7 +3,7 @@ import { getBaseUrl } from '../utils/urlHelper.js';
 
 export async function getUserDashboardAnalytics(req, res) {
   try {
-    const userId = req.user._id;
+    const userId = String(req.user._id);
     const { range = '7d' } = req.query; // '7d' | '30d' | 'custom'
 
     // Fetch strictly links and logs belonging to this authenticated user only

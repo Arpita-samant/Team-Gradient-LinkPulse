@@ -14,7 +14,7 @@ const RESERVED_ALIASES = [
 export async function createLink(req, res) {
   try {
     const { originalUrl, customAlias, expiryDate, password, tags, title, type = 'link' } = req.body;
-    const userId = req.user ? req.user._id : 'usr_anonymous';
+    const userId = req.user ? String(req.user._id) : 'usr_anonymous';
 
     if (!originalUrl) {
       return res.status(400).json({ success: false, message: 'Please provide a valid original URL.' });
@@ -178,7 +178,7 @@ export async function createLink(req, res) {
 
 export async function getUserLinks(req, res) {
   try {
-    const userId = req.user._id;
+    const userId = String(req.user._id);
     const { search, tag, status, page = 1, limit = 20, sortBy = 'createdAt', order = 'desc', showAll } = req.query;
 
     const pageNum = Math.max(1, parseInt(page, 10));
@@ -528,7 +528,7 @@ export async function deleteLink(req, res) {
 
 export async function exportLinks(req, res) {
   try {
-    const userId = req.user._id;
+    const userId = String(req.user._id);
     const { format = 'csv' } = req.query;
     const links = await LinkService.find({ userId });
     const baseUrl = getBaseUrl(req);

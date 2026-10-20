@@ -24,14 +24,14 @@ export default function AdminPanelPage() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('Users');
   const [stats, setStats] = useState({
-    totalUsers: 48,
-    usersGrowth: '+10%',
-    totalLinks: 1248,
-    linksGrowth: '+12%',
-    totalQRCodes: 356,
-    qrGrowth: '+9%',
-    suspiciousLinks: 3,
-    suspiciousGrowth: '50%'
+    totalUsers: 0,
+    usersGrowth: '0%',
+    totalLinks: 0,
+    linksGrowth: '0%',
+    totalQRCodes: 0,
+    qrGrowth: '0%',
+    suspiciousLinks: 0,
+    suspiciousGrowth: '0%'
   });
 
   const [users, setUsers] = useState([]);
@@ -96,6 +96,16 @@ export default function AdminPanelPage() {
       setUsers(users.filter(u => u._id !== id));
     } catch (err) {
       alert(err.message || 'Failed to delete user.');
+    }
+  };
+
+  const handleToggleUserStatus = async (id, currentStatus) => {
+    const newStatus = currentStatus === 'suspended' ? 'active' : 'suspended';
+    try {
+      await adminAPI.updateUserStatus(id, { status: newStatus });
+      setUsers(users.map(u => u._id === id ? { ...u, status: newStatus } : u));
+    } catch (err) {
+      alert(err.message || 'Failed to update user status.');
     }
   };
 
@@ -180,19 +190,19 @@ export default function AdminPanelPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--line)] space-y-1">
             <span className="font-ndot text-[10px] text-[var(--fg3)]">TOTAL USERS</span>
-            <p className="font-ndot text-2xl text-[var(--fg)]">{stats.totalUsers || users.length}</p>
+            <p className="font-ndot text-2xl text-[var(--fg)]">{stats.totalUsers ?? users.length}</p>
             <span className="text-[10px] text-[var(--accent)] block font-ndot">↑ {stats.usersGrowth || '+10%'} last week</span>
           </div>
 
           <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--line)] space-y-1">
             <span className="font-ndot text-[10px] text-[var(--fg3)]">TOTAL LINKS</span>
-            <p className="font-ndot text-2xl text-[var(--accent)]">{stats.totalLinks || links.length}</p>
+            <p className="font-ndot text-2xl text-[var(--accent)]">{stats.totalLinks ?? links.length}</p>
             <span className="text-[10px] text-[var(--accent)] block font-ndot">↑ {stats.linksGrowth || '+12%'} last week</span>
           </div>
 
           <div className="p-4 rounded-xl bg-[var(--surface)] border border-[var(--line)] space-y-1">
             <span className="font-ndot text-[10px] text-[var(--fg3)]">SUSPICIOUS LINKS</span>
-            <p className="font-ndot text-2xl text-[var(--fg)]">{stats.suspiciousLinks || suspiciousLinksList.length}</p>
+            <p className="font-ndot text-2xl text-[var(--fg)]">{stats.suspiciousLinks ?? suspiciousLinksList.length}</p>
             <span className="text-[10px] text-[var(--accent)] block font-ndot">↓ {stats.suspiciousGrowth || '-50%'} last week</span>
           </div>
         </div>
@@ -250,6 +260,8 @@ export default function AdminPanelPage() {
                       <th className="px-4 py-3">IDENTITY</th>
                       <th className="px-4 py-3">EMAIL</th>
                       <th className="px-4 py-3">ROLE</th>
+                      <th className="px-4 py-3">LINKS</th>
+                      <th className="px-4 py-3">CLICKS</th>
                       <th className="px-4 py-3">STATUS</th>
                       <th className="px-4 py-3">CREATED</th>
                       <th className="px-4 py-3 text-right">ACTION</th>
@@ -289,11 +301,30 @@ export default function AdminPanelPage() {
                             </span>
                           </td>
 
+                          <td className="px-4 py-3.5 whitespace-nowrap">
+                            <span className="font-mono text-xs text-black dark:text-white font-medium">
+                              {u.totalLinks ?? 0}
+                            </span>
+                          </td>
+
+                          <td className="px-4 py-3.5 whitespace-nowrap">
+                            <span className="font-mono text-xs text-[#D71921] font-bold">
+                              {u.totalClicks ?? 0}
+                            </span>
+                          </td>
+
                           <td className="px-4 py-3.5">
-                            <div className="flex items-center gap-1.5 text-black dark:text-white text-[11px]">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#D71921]"></span>
-                              <span>ACTIVE</span>
-                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleToggleUserStatus(u._id, u.status)}
+                              className="flex items-center gap-1.5 text-[11px] font-mono uppercase cursor-pointer hover:underline"
+                              title={`Click to ${u.status === 'suspended' ? 'activate' : 'suspend'} account`}
+                            >
+                              <span className={`w-1.5 h-1.5 rounded-full ${u.status === 'suspended' ? 'bg-zinc-500' : 'bg-[#D71921] led-dot'}`}></span>
+                              <span className={u.status === 'suspended' ? 'text-zinc-500' : 'text-black dark:text-white'}>
+                                {u.status === 'suspended' ? 'SUSPENDED' : 'ACTIVE'}
+                              </span>
+                            </button>
                           </td>
 
                           <td className="px-4 py-3.5 text-zinc-500 whitespace-nowrap text-[11px]">
