@@ -38,6 +38,33 @@ export function isValidURL(urlString) {
 }
 
 /**
+ * Detects URLs containing embedded username or password credentials
+ */
+export function hasEmbeddedCredentials(urlString) {
+  try {
+    const parsed = new URL(urlString);
+    return parsed.username !== '' || parsed.password !== '';
+  }
+  catch {
+    return false;
+  }
+}
+
+/**
+ * Detects URLs that use an IPv4 address instead of a domain name
+ */
+export function usesIPv4Address(urlString) {
+  try {
+    const parsed = new URL(urlString);
+    const hostname = parsed.hostname;
+
+    return /^(?:\d{1,3}\.){3}\d{1,3}$/.test(hostname);
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Checks if a target URL is considered malicious, suspicious, or blocked
  */
 export function checkUrlSafety(urlString, customBlockedDomains = []) {
@@ -50,6 +77,23 @@ export function checkUrlSafety(urlString, customBlockedDomains = []) {
 
   const parsed = new URL(urlString);
   const hostname = parsed.hostname.toLowerCase();
+
+  //Block URLs containing embedded username or password
+  if (hasEmbeddedCredentials(urlString)) {
+    return {
+      safe: false,
+      reason: 'URLs containing embedded credentials are prohibited for security reasons'
+    };
+  }
+
+  //Flag URLs that use an IP address instead of a domain
+  if (usesIPAddress(urlString)) {
+    return {
+      safe: false,
+      suspicious: true,
+      reason: 'URLs using IP addresses instead of domain names are flagged for security reasons'
+    };
+  }
 
   // Prevent local network/loopback targeting
   if (
