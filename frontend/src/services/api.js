@@ -1,4 +1,12 @@
-const API_BASE = import.meta.env.VITE_API_URL || '/api';
+// Auto-normalize API_BASE to ensure /api suffix is present and trailing slashes are removed
+let rawApiUrl = (import.meta.env.VITE_API_URL || '').trim();
+if (rawApiUrl) {
+  rawApiUrl = rawApiUrl.replace(/\/+$/, '');
+  if (!rawApiUrl.endsWith('/api')) {
+    rawApiUrl += '/api';
+  }
+}
+const API_BASE = rawApiUrl || '/api';
 
 export async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem('linkpulse_token');

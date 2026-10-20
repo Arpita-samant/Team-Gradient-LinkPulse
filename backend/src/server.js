@@ -59,6 +59,13 @@ app.use('/api/qr', qrRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/admin', adminRoutes);
 
+// Fallback mounts directly on root in case client omits /api prefix
+app.use('/auth', authRoutes);
+app.use('/links', linkRoutes);
+app.use('/qr', qrRoutes);
+app.use('/analytics', analyticsRoutes);
+app.use('/admin', adminRoutes);
+
 // Root route
 app.get('/', (req, res) => {
   res.json({
@@ -83,7 +90,9 @@ app.get('/r/:shortCode', handleRedirect);
 // Main redirection route for root short links (e.g., /abc123)
 app.get('/:shortCode', (req, res, next) => {
   // Ignore favicon and system paths
-  if (req.params.shortCode === 'favicon.ico' || req.params.shortCode.startsWith('api')) {
+  const lower = (req.params.shortCode || '').toLowerCase();
+  const systemPaths = ['favicon.ico', 'api', 'auth', 'links', 'qr', 'analytics', 'admin', 'r'];
+  if (systemPaths.includes(lower) || lower.startsWith('api')) {
     return next();
   }
   handleRedirect(req, res);
