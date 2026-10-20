@@ -160,29 +160,62 @@ class MemoryFileStore {
 
 export const memoryStore = new MemoryFileStore();
 
+let cachedPromise = null;
 let isMongoConnected = false;
 
-export async function connectDB() {
-  const mongoURI = process.env.MONGODB_URI;
-  if (!mongoURI || mongoURI.includes('<password>') || mongoURI.includes('<db_password>') || mongoURI.includes('YOUR_PASSWORD') || mongoURI.includes('<your_password>')) {
-    console.log('[DB] Running with LinkPulse high-fidelity persistent store (MongoDB Atlas URI not set or placeholder detected).');
-    return;
-  }
-
+export async function seedMongoAdmin() {
+  if (!isMongoDBActive()) return;
   try {
-    await mongoose.connect(mongoURI, {
-      serverSelectionTimeoutMS: 5000,
-      autoIndex: process.env.NODE_ENV !== 'production',
-      maxPoolSize: 10
-    });
-    isMongoConnected = true;
-    console.log('[DB] Securely connected to MongoDB Atlas database cluster.');
+    const existing = await MongooseModels.User.findOne({ email: 'samantarpita70@gmail.com' });
+    if (!existing) {
+      const adminHash = bcrypt.hashSync('arpitasamant12', 10);
+      await MongooseModels.User.create({
+        name: 'Arpita Samant',
+        email: 'samantarpita70@gmail.com',
+        password: adminHash,
+        role: 'admin',
+        status: 'active',
+        createdAt: new Date().toISOString()
+      });
+      console.log('[DB] Seeded initial admin account in MongoDB Atlas.');
+    }
   } catch (err) {
-    console.warn(`[DB] MongoDB Atlas connection error: ${err.message}. Seamlessly falling back to LinkPulse persistent store.`);
-    isMongoConnected = false;
+    console.warn('[DB] Could not seed admin in MongoDB:', err.message);
   }
 }
 
+export async function connectDB() {
+  if (mongoose.connection.readyState === 1) {
+    isMongoConnected = true;
+    return mongoose.connection;
+  }
+
+  const mongoURI = process.env.MONGODB_URI;
+  if (!mongoURI || mongoURI.includes('<password>') || mongoURI.includes('<db_password>') || mongoURI.includes('YOUR_PASSWORD') || mongoURI.includes('<your_password>')) {
+    return null;
+  }
+
+  if (!cachedPromise) {
+    cachedPromise = mongoose.connect(mongoURI, {
+      serverSelectionTimeoutMS: 5000,
+      autoIndex: false,
+      maxPoolSize: 10
+    }).then(async (m) => {
+      isMongoConnected = true;
+      console.log('[DB] Securely connected to MongoDB Atlas database cluster.');
+      await seedMongoAdmin();
+      return m;
+    }).catch(err => {
+      cachedPromise = null;
+      isMongoConnected = false;
+      console.warn(`[DB] MongoDB Atlas connection error: ${err.message}.`);
+      return null;
+    });
+  }
+
+  return await cachedPromise;
+}
+
 export function isMongoDBActive() {
-  return isMongoConnected;
+  return mongoose.connection.readyState === 1;
 }

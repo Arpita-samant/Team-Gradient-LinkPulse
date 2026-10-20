@@ -14,7 +14,8 @@ import {
   Globe,
   ArrowUpRight,
   Plus,
-  BarChart2
+  BarChart2,
+  RefreshCw
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -32,21 +33,29 @@ export default function AnalyticsDashboardPage() {
   const [range, setRange] = useState('7d');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const firstName = user?.name ? user.name.split(' ')[0] : 'Guest';
 
   useEffect(() => {
-    fetchAnalytics(range);
+    fetchAnalytics(range, true);
+    if (!user) return;
+    const interval = setInterval(() => {
+      fetchAnalytics(range, false);
+    }, 12000);
+    return () => clearInterval(interval);
   }, [range, user]);
 
-  const fetchAnalytics = async (selectedRange) => {
+  const fetchAnalytics = async (selectedRange, showSpinner = true) => {
     if (!user) {
       setData(null);
       setLoading(false);
+      setIsRefreshing(false);
       return;
     }
     try {
-      setLoading(true);
+      if (showSpinner) setLoading(true);
+      else setIsRefreshing(true);
       const res = await analyticsAPI.getDashboard(selectedRange);
       if (res.success) {
         setData(res);
@@ -55,6 +64,7 @@ export default function AnalyticsDashboardPage() {
       console.error('Failed to load dashboard analytics:', err);
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -95,11 +105,22 @@ export default function AnalyticsDashboardPage() {
           </p>
         </div>
 
-        {/* Date Filter pill */}
+        <div className="flex items-center gap-2 self-start sm:self-auto font-mono text-xs">
+          <button
+            type="button"
+            onClick={() => fetchAnalytics(range, false)}
+            disabled={isRefreshing}
+            className="btn btn-line btn-sm flex items-center gap-1.5 cursor-pointer"
+            title="Refresh analytics telemetry"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-[var(--accent)]' : ''}`} />
+            <span className="font-ndot text-[11px]">SYNC</span>
+          </button>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[var(--surface)] border border-[var(--line)] font-ndot text-[11px] text-[var(--fg2)] self-start sm:self-auto">
           <Calendar className="w-3.5 h-3.5 text-[var(--accent)]" />
           <span>WINDOW: {range === '30d' ? '30 DAYS' : '7 DAYS'}</span>
         </div>
+      </div>
       </div>
 
       {!user && (

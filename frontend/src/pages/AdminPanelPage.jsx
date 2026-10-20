@@ -17,7 +17,8 @@ import {
   X,
   TrendingUp,
   ShieldCheck,
-  AlertCircle
+  AlertCircle,
+  RefreshCw
 } from 'lucide-react';
 
 export default function AdminPanelPage() {
@@ -49,14 +50,22 @@ export default function AdminPanelPage() {
   const [newDomainData, setNewDomainData] = useState({ domain: '', reason: '' });
 
   const [showLogsModal, setShowLogsModal] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    fetchInitialData();
+    fetchInitialData(true);
+    // Auto-poll every 12 seconds so admin sees newly signed-up accounts and live metrics
+    const interval = setInterval(() => {
+      fetchInitialData(false);
+    }, 12000);
+    return () => clearInterval(interval);
   }, []);
 
-  const fetchInitialData = async () => {
+  const fetchInitialData = async (showFullLoading = true) => {
     try {
-      setLoading(true);
+      if (showFullLoading) setLoading(true);
+      else setIsRefreshing(true);
+
       const [metricsRes, usersRes, linksRes, domainsRes] = await Promise.all([
         adminAPI.getMetrics(),
         adminAPI.getUsers(),
@@ -72,6 +81,7 @@ export default function AdminPanelPage() {
       console.error('Error fetching admin data:', err);
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -177,13 +187,25 @@ export default function AdminPanelPage() {
             <h1 className="font-ndot text-2xl text-[var(--fg)]">Admin Panel</h1>
             <p className="text-xs text-[var(--fg2)] mt-1 font-mono">Manage users, links, domains, and platform settings</p>
           </div>
-          <button
-            type="button"
-            onClick={() => setShowAddUserModal(true)}
-            className="btn btn-solid btn-sm cursor-pointer"
-          >
-            <span>Add User</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => fetchInitialData(false)}
+              disabled={isRefreshing}
+              className="btn btn-line btn-sm cursor-pointer flex items-center gap-1.5"
+              title="Refresh live user and link telemetry"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-[var(--accent)]' : ''}`} />
+              <span className="font-ndot text-xs">LIVE SYNC</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowAddUserModal(true)}
+              className="btn btn-solid btn-sm cursor-pointer"
+            >
+              <span>Add User</span>
+            </button>
+          </div>
         </div>
 
         {/* 3 KPI Metrics matching the attached file */}

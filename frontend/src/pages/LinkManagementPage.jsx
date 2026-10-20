@@ -38,6 +38,7 @@ export default function LinkManagementPage() {
   const { globalSearch } = useOutletContext() || {};
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All Links');
   const [tagFilter, setTagFilter] = useState('All Tags');
@@ -84,19 +85,26 @@ export default function LinkManagementPage() {
   }, [globalSearch]);
 
   useEffect(() => {
-    fetchLinks();
+    fetchLinks(true);
+    if (!user) return;
+    const interval = setInterval(() => {
+      fetchLinks(false);
+    }, 12000);
+    return () => clearInterval(interval);
   }, [search, statusFilter, tagFilter, page]);
 
-  const fetchLinks = async () => {
+  const fetchLinks = async (showSpinner = true) => {
     if (!user) {
       setLinks([]);
       setTotalPages(1);
       setTotalLinks(0);
       setLoading(false);
+      setIsRefreshing(false);
       return;
     }
     try {
-      setLoading(true);
+      if (showSpinner) setLoading(true);
+      else setIsRefreshing(true);
       const params = {
         page,
         limit: 15
@@ -123,6 +131,7 @@ export default function LinkManagementPage() {
       console.error('Failed to fetch links:', err);
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
   };
 
@@ -391,11 +400,14 @@ export default function LinkManagementPage() {
 
           {/* Refresh */}
           <button
-            onClick={fetchLinks}
+            type="button"
+            onClick={() => fetchLinks(false)}
+            disabled={loading || isRefreshing}
             title="Refresh link list"
-            className="btn btn-line btn-sm"
+            className="btn btn-line btn-sm flex items-center gap-1.5 cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[var(--accent)]' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing || loading ? 'animate-spin text-[var(--accent)]' : ''}`} />
+            <span className="font-ndot text-[11px]">SYNC</span>
           </button>
         </div>
       </div>
