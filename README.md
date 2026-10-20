@@ -78,17 +78,3 @@
 
 
 
-## 🚀 Setup Instructions
-
-Follow these steps to run LinkPulse locally on your machine:
-
-### Prerequisites
-
-Node.js installed on your system
-
-MongoDB Atlas account or local MongoDB instance
-
-### 1. Clone the Repository
-```text-plain
-git clone https://github.com/your-username/linkpulse.git
-cd linkpulse
