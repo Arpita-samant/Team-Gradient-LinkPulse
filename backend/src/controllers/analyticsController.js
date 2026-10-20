@@ -1,4 +1,5 @@
 import { LinkService, ClickLogService } from '../models/dataService.js';
+import { getBaseUrl } from '../utils/urlHelper.js';
 
 export async function getUserDashboardAnalytics(req, res) {
   try {
@@ -50,7 +51,7 @@ export async function getUserDashboardAnalytics(req, res) {
 
     // Top Performing Links for this user
     const sortedLinks = [...links].sort((a, b) => (b.clicks || 0) - (a.clicks || 0)).slice(0, 5);
-    const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+    const baseUrl = getBaseUrl(req);
     const topPerforming = sortedLinks.map((l) => {
       return {
         id: l._id,

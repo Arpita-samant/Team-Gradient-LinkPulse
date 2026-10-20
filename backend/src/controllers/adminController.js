@@ -6,6 +6,7 @@ import {
   SystemLogService,
   ClickLogService
 } from '../models/dataService.js';
+import { getBaseUrl } from '../utils/urlHelper.js';
 
 export async function getAdminMetrics(req, res) {
   try {
@@ -171,7 +172,7 @@ export async function getAllLinksAdmin(req, res) {
       );
     }
 
-    const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+    const baseUrl = getBaseUrl(req);
     const formatted = links.map(({ password, ...l }) => ({
       ...l,
       shortUrl: `${baseUrl}/${l.shortCode}`

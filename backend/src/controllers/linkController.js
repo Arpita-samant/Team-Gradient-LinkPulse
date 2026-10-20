@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { generateShortCode } from '../utils/base62.js';
 import { checkUrlSafety, calculateMD5 } from '../utils/safetyCheck.js';
 import { LinkService, ClickLogService, BlockedDomainService, SystemLogService } from '../models/dataService.js';
+import { getBaseUrl } from '../utils/urlHelper.js';
 
 // Reserved keywords that cannot be used as short aliases
 const RESERVED_ALIASES = [
@@ -108,7 +109,7 @@ export async function createLink(req, res) {
     const urlHash = calculateMD5(originalUrl);
 
     // Host base for short URL
-    const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+    const baseUrl = getBaseUrl(req);
     const shortUrl = `${baseUrl}/${shortCode}`;
 
     // Generate QR Code data URL
@@ -246,7 +247,7 @@ export async function getUserLinks(req, res) {
     const startIndex = (pageNum - 1) * limitNum;
     const paginated = links.slice(startIndex, startIndex + limitNum);
 
-    const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+    const baseUrl = getBaseUrl(req);
     const formatted = await Promise.all(paginated.map(async ({ password, ...l }) => {
       const shortUrl = `${baseUrl}/${l.shortCode}`;
       let qrCodeDataUrl = l.qrCodeDataUrl;
@@ -309,7 +310,7 @@ export async function getLinkById(req, res) {
       return res.status(403).json({ success: false, message: 'Unauthorized access to link.' });
     }
 
-    const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+    const baseUrl = getBaseUrl(req);
     const { password, ...safeLink } = link;
 
     // Fetch click logs and calculate analytics for this specific link
@@ -438,7 +439,7 @@ export async function updateLink(req, res) {
       updates.shortCode = cleanAlias;
       updates.customAlias = cleanAlias;
 
-      const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+      const baseUrl = getBaseUrl(req);
       const newShortUrl = `${baseUrl}/${cleanAlias}`;
       try {
         updates.qrCodeDataUrl = await QRCode.toDataURL(newShortUrl, {
@@ -453,7 +454,7 @@ export async function updateLink(req, res) {
 
     const updated = await LinkService.updateById(id, updates);
     const { password: _, ...safeLink } = updated;
-    const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+    const baseUrl = getBaseUrl(req);
 
     return res.json({
       success: true,
@@ -530,7 +531,7 @@ export async function exportLinks(req, res) {
     const userId = req.user._id;
     const { format = 'csv' } = req.query;
     const links = await LinkService.find({ userId });
-    const baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+    const baseUrl = getBaseUrl(req);
 
     if (format === 'json') {
       const clean = links.map(({ password, ...l }) => ({
