@@ -180,6 +180,11 @@ Once both the backend and frontend are running, open the frontend URL in your br
 - **MongoDB connection issue:** Verify your `MONGO_URI` in the backend `.env` file.
 - **Frontend cannot connect to backend:** Check that the backend is running and the frontend API configuration uses the correct backend URL.
 
+## 🌐 Live Link
+
+**Live Application:** https://link-pulse-tawny.vercel.app/
+
+
 ## 🎥 Project Demo
 
 https://github.com/user-attachments/assets/ff94aabe-64a8-4b5a-96bf-aca8bb0aa2b2
