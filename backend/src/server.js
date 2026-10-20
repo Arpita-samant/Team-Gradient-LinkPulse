@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { connectDB, isMongoDBActive } from './config/db.js';
+import { connectDB, isMongoDBActive, getDbDiagnostics } from './config/db.js';
 import { generalLimiter } from './middleware/rateLimiter.js';
 import authRoutes from './routes/authRoutes.js';
 import linkRoutes from './routes/linkRoutes.js';
@@ -86,8 +86,7 @@ app.get('/api/health', (req, res) => {
     status: 'healthy',
     timestamp: new Date().toISOString(),
     service: 'LinkPulse API Server',
-    database: isMongoDBActive() ? 'MongoDB Atlas (Connected)' : 'Local Ephemeral Store',
-    persistent: isMongoDBActive()
+    ...getDbDiagnostics()
   });
 });
 

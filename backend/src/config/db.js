@@ -118,7 +118,14 @@ class MemoryFileStore {
     }
 
     const candidateFiles = isVercel
-      ? [path.join('/tmp', 'data.json'), path.join('/tmp', 'store.json'), LEGACY_STORE_FILE, DATA_JSON_FILE]
+      ? [
+          path.join('/tmp', 'data.json'),
+          path.join('/tmp', 'store.json'),
+          BACKEND_DATA_JSON_FILE,
+          path.resolve(__dirname, '../../data/data.json'),
+          path.resolve(__dirname, '../../data/store.json'),
+          ROOT_DATA_JSON_FILE
+        ]
       : [DATA_JSON_FILE, BACKEND_DATA_JSON_FILE, ROOT_DATA_JSON_FILE, LEGACY_STORE_FILE];
 
     let loaded = false;
@@ -283,12 +290,28 @@ export async function connectDB() {
       cachedPromise = null;
       isMongoConnected = false;
       lastMongoFailTime = Date.now();
+      lastMongoError = err.message;
       console.warn(`[DB] MongoDB Atlas connection error: ${err.message}. Serving from data.json.`);
       return null;
     });
   }
 
   return await cachedPromise;
+}
+
+let lastMongoError = null;
+
+export function getDbDiagnostics() {
+  const uri = process.env.MONGODB_URI || '';
+  const isConfigured = Boolean(uri && !uri.includes('<password>') && !uri.includes('<db_password>'));
+  return {
+    database: isMongoDBActive() ? 'MongoDB Atlas (Connected)' : 'Local File Store (Ephemeral on Vercel)',
+    persistent: isMongoDBActive(),
+    mongoConfigured: isConfigured,
+    hasMongoUri: Boolean(uri),
+    lastMongoError: lastMongoError,
+    activeUsersCount: memoryStore?.data?.users?.length || 0
+  };
 }
 
 export function isMongoDBActive() {
